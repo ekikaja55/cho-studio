@@ -35,6 +35,62 @@ class ArtistGalleryController extends Controller
 
         return view('artist.gallery', compact('galleryData'));
     }
+    
+    public function destroy($id): JsonResponse
+    {
+        $gallery = Gallery::findOrFail($id);
+
+        // hapus file gambar
+        if ($gallery->image_url) {
+            Storage::disk('public')->delete(str_replace('/storage/', '', $gallery->image_url));
+        }
+
+        $gallery->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Gallery deleted successfully.',
+        ]);
+    }
+
+    public function update(Request $request, $id): JsonResponse
+    {
+        $gallery = Gallery::findOrFail($id);
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:150',
+            'description' => 'nullable|string',
+            'file_format' => 'required|string|max:10',
+            'price' => 'nullable|numeric',
+            'image' => 'nullable|image|mimes:png,jpg,jpeg|max:5120',
+        ]);
+
+        // kalau user upload gambar baru
+        if ($request->hasFile('image')) {
+            // hapus gambar lama
+            if ($gallery->image_url) {
+                Storage::disk('public')->delete(str_replace('/storage/', '', $gallery->image_url));
+            }
+            $path = $request->file('image')->store('gallery', 'public');
+            $gallery->image_url = Storage::url($path);
+        }
+
+        // update data lainnya
+        $gallery->update([
+            'title' => $validated['title'],
+            'description' => $validated['description'] ?? null,
+            'file_format' => $validated['file_format'],
+            'price' => $validated['price'] ?? null,
+            'status' => $validated['price'] ? 'available' : 'draft',
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Gallery updated successfully.',
+            'gallery' => $gallery,
+        ]);
+    }
+
 
     /**
      * Store a newly created gallery item.

@@ -58,6 +58,8 @@ Route::prefix('artist')->middleware(['auth', 'role:artist'])->group(function () 
     Route::post('/commissions/upload/{commissionId}', [ArtistCommissionDetailController::class, 'upload_image'])->name('artist.commission_upload');
 
     // adoptions
+    Route::put('/artist/gallery/{id}', [ArtistGalleryController::class, 'update'])->name('artist.gallery.update');
+    Route::delete('/artist/gallery/{id}', [ArtistGalleryController::class, 'destroy'])->name('artist.gallery.destroy');
     Route::post('/gallery/store', [ArtistGalleryController::class, 'store'])->name('artist.gallery.store');
     Route::get('/adoptions', [ArtistAdoptionController::class, 'index'])->name('artist.adoptions');
     Route::get('/getAdoptions', [ArtistAdoptionController::class, 'getAdoptions'])->name('artist.getAdoptions');
