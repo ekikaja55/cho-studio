@@ -70,7 +70,8 @@
 
                 {{-- Kontainer Harga (Awalnya tersembunyi) --}}
                 <div id="priceContainer" class="mb-4 hidden transition-all duration-500">
-                    <input id="priceInput" name="price" type="number" placeholder="Price" class="border rounded-lg px-3 py-2 w-full sm:w-[80%] focus:ring-2 focus:ring-[#c9b8e3] outline-none">
+                    <input id="priceInput" name="price" type="number" placeholder="Price" class="border rounded-lg px-3 py-2 w-full sm:w-[80%] focus:ring-2 focus:ring-[#c9b8e3] outline-none" value="{{ old('price', $item['price'] ?? '') }}"
+                    >
                     <p class="error-message"></p>
                 </div>
             
@@ -100,9 +101,9 @@
                         data-image="{{ $item['image_url'] }}"
                         data-title="{{ $item['title'] ?? '' }}"
                         data-desc="{{ $item['description'] ?? '' }}"
-                        data-price="{{ $item['price'] ?? '' }}"
+                        data-price="{{ $item['price'] !== null ? $item['price'] : '' }}"
+                        data-purchase="{{ $item['price'] !== null ? 'true' : 'false' }}"
                         data-file="{{ $item['file_type'] ?? '' }}"
-                        data-purchase="{{ $item['purchase'] ?? false }}"
                     >
                         <img src="{{ $item['image_url'] }}" alt="Image" class="rounded-md object-cover w-full h-full border-2 border-black " onerror="handleBrokenImage(this)">
                     </div>
@@ -222,12 +223,21 @@ document.addEventListener('DOMContentLoaded', function () {
         descInput.value = card.dataset.desc;
         fileTypeInput.value = card.dataset.file.toLowerCase();
         
-        const isPurchaseEnabled = (card.dataset.purchase === 'true');
-        purchaseCheckbox.checked = isPurchaseEnabled;
-        if (isPurchaseEnabled) {
+        // Ambil data dari card
+        const price = card.dataset.price;
+        const hasPrice = price && price.trim() !== "" && !isNaN(price);
+
+        // Set checkbox dan input harga
+        purchaseCheckbox.checked = hasPrice;
+
+        if (hasPrice) {
             priceContainer.classList.remove('hidden');
-            priceInput.value = card.dataset.price;
+            priceInput.value = price;
+        } else {
+            priceContainer.classList.add('hidden');
+            priceInput.value = '';
         }
+
 
         submitBtn.textContent = 'Update';
         deleteBtn.classList.remove('hidden');
@@ -259,13 +269,39 @@ document.addEventListener('DOMContentLoaded', function () {
         submitBtn.textContent = editMode ? 'Updating...' : 'Adding...';
 
         try {
-            const res = await fetch(artworkForm.action, {
+            let res = await fetch(artworkForm.action, {
                 method: 'POST',
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 },
                 body: formData
             });
+
+            res = fetch(`/artist/gallery/${galleryId}`, {
+                method: 'PUT',
+                headers: { 'X-CSRF-TOKEN': csrfToken },
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Gallery updated!');
+                    // bisa langsung update tampilan tanpa reload
+                }
+            });
+
+            res = fetch(`/artist/gallery/${galleryId}`, {
+                method: 'DELETE',
+                headers: { 'X-CSRF-TOKEN': csrfToken },
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    document.querySelector(`[data-id="${galleryId}"]`).remove();
+                }
+            });
+
+
 
             const data = await res.json();
             if (!res.ok || !data.success) {
@@ -300,6 +336,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (card && card.parentNode) card.parentNode.removeChild(card);
                 } catch (e) { console.error('Error removing broken image card', e); }
             };
+            if (g.price) {
+                document.querySelector('#price').disabled = false;
+                document.querySelector('#price').value = g.price;
+            }
+
             img.alt = 'Image';
             img.className = 'rounded-md object-cover w-full h-full border-2 border-black';
             card.appendChild(img);

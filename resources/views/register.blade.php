@@ -216,6 +216,8 @@
                                 time: 2,
                             });
 
+                            
+
                             setTimeout(() => {
                                 window.location.href = response.redirect_url;
                             }, 500);

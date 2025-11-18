@@ -41,6 +41,8 @@ Route::post('/register', [LoginPageController::class, 'processRegister'])->name(
 Route::prefix('artist')->middleware(['auth', 'role:artist'])->group(function () {
     Route::get('/commisions', [ArtistCommisionController::class, 'index'])->name('artist.commisions');
     Route::get('/gallery', [ArtistGalleryController::class, 'index'])->name('artist.gallery');
+    Route::put('/artist/gallery/{id}', [ArtistGalleryController::class, 'update'])->name('artist.gallery.update');
+    Route::delete('/artist/gallery/{id}', [ArtistGalleryController::class, 'destroy'])->name('artist.gallery.destroy');
     Route::post('/gallery/store', [ArtistGalleryController::class, 'store'])->name('artist.gallery.store');
     Route::get('/commision-detail', [ArtistCommisionController::class, 'detail'])->name('artist.commision_detail');
     Route::get('/adoptions', [ArtistAdoptionController::class, 'index'])->name('artist.adoptions');

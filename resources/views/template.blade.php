@@ -17,6 +17,6 @@
     @yield('content')
 
     @yield('scripts')
-    <!-- @yield('disableinspect') -->
+    @yield('disableinspect')
 </body>
 </html>
