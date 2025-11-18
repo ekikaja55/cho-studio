@@ -4,7 +4,6 @@
     <div class="flex justify-center items-center h-screen">
         <div
             class="flex flex-col justify-center items-center bg-[#f0ebe3] w-[75%] h-[70%] p-7 rounded-3xl border-4 border-black shadow-[3vh_3vh_0_black]">
-
             {{-- judul --}}
             <div class="flex justify-center mb-6 font-bold font-[HammersmithOne-Regular] mt-[5vh]">
                 <h1 class="text-4xl md:text-6xl lg:text-8xl">CHO'S STUDIO</h1>

@@ -14,6 +14,14 @@
                 </div>
             </a>
 
+            <!-- Bust Up -->
+            <a href="{{ route('member.commission_form', ['type' => 'Bust Up']) }}" class="block">
+                <div class="flex flex-col items-center rounded-2xl overflow-hidden bg-gray-100 shadow hover:shadow-lg transition duration-300 cursor-pointer">
+                    <img src="{{ asset('assets/comm_sample/Custom_Sample.jpg') }}" alt="Commission Bust Up" class="w-[160px] h-[240px] object-cover">
+                    <p class="py-3 font-medium text-sm text-gray-800">Bust Up</p>
+                </div>
+            </a>
+
             <!-- Half Body -->
             <a href="{{ route('member.commission_form', ['type' => 'Half Body']) }}" class="block">
                 <div class="flex flex-col items-center rounded-2xl overflow-hidden bg-gray-100 shadow hover:shadow-lg transition duration-300 cursor-pointer">
@@ -27,14 +35,6 @@
                 <div class="flex flex-col items-center rounded-2xl overflow-hidden bg-gray-100 shadow hover:shadow-lg transition duration-300 cursor-pointer">
                     <img src="{{ asset('assets/comm_sample/FullBody_Sample.png') }}" alt="Commission Full Body" class="w-[160px] h-[240px] object-cover">
                     <p class="py-3 font-medium text-sm text-gray-800">Full Body</p>
-                </div>
-            </a>
-
-            <!-- Custom -->
-            <a href="{{ route('member.commission_form', ['type' => 'Custom']) }}" class="block">
-                <div class="flex flex-col items-center rounded-2xl overflow-hidden bg-gray-100 shadow hover:shadow-lg transition duration-300 cursor-pointer">
-                    <img src="{{ asset('assets/comm_sample/Custom_Sample.jpg') }}" alt="Commission Custom" class="w-[160px] h-[240px] object-cover">
-                    <p class="py-3 font-medium text-sm text-gray-800">Custom</p>
                 </div>
             </a>
         </div>

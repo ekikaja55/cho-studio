@@ -1,7 +1,7 @@
 <div class="font-[HammersmithOne-Regular] bg-stone-900 text-white sticky top-0 z-50 w-full">
     <div class="flex justify-between items-center p-4 xl:w-[80%] mx-auto lg:w-full">
         <div class="flex gap-3 items-end">
-            <a href="{{ route('artist.commisions') }}" class="text-3xl font-bold max-lg:text-2xl">Cho's Studio</a>
+            <a href="{{ route('artist.commissions') }}" class="text-3xl font-bold max-lg:text-2xl">Cho's Studio</a>
             <p class="text-xl max-lg:text-lg max-m:text-base">ARTIST</p>
         </div>
 
@@ -9,14 +9,20 @@
             <!-- Desktop nav -->
             <nav class="hidden md:block text-xl max-xl:text-lg font-bold">
                 <ul class="flex gap-8 items-center">
-                    <li><a href="{{route('artist.gallery')}}" class="hover:underline underline-offset-1 decoration-2 {{ request()->routeIs('artist.gallery') ? 'text-(--color-pastel-turqoise)' : '' }}">Gallery</a></li>
-                    <li><a href="{{ route('artist.adoptions') }}" class="hover:underline underline-offset-1 decoration-2 {{ request()->routeIs('artist.adoptions') ? 'text-(--color-pastel-turqoise)' : '' }}">Adoptions</a></li>
-                    <li><a href="{{ route('artist.commisions') }}"
-                            class="hover:underline underline-offset-1 decoration-2 {{ request()->routeIs('artist.commisions') ? 'text-(--color-pastel-turqoise)' : '' }}">Commisions</a></li>
+                    <li><a href="{{ route('artist.gallery') }}"
+                            class="hover:underline underline-offset-1 decoration-2 {{ request()->routeIs('artist.gallery') ? 'text-(--color-pastel-turqoise)' : '' }}">Gallery</a>
+                    </li>
+                    <li><a href="{{ route('artist.adoptions') }}"
+                            class="hover:underline underline-offset-1 decoration-2 {{ request()->routeIs('artist.adoptions') ? 'text-(--color-pastel-turqoise)' : '' }}">Adoptions</a>
+                    </li>
+                    <li><a href="{{ route('artist.commissions') }}"
+                            class="hover:underline underline-offset-1 decoration-2 {{ request()->routeIs('artist.commissions') ? 'text-(--color-pastel-turqoise)' : '' }}">Commissions</a>
+                    </li>
                     <li>
                         <form method="POST" action="{{ route('logout') }}" class="inline">
                             @csrf
-                            <button type="submit" class="py-2 px-4 rounded bg-(--status-danger) text-white text-2xl max-xl:text-base font-bold hover:scale-105 transition-transform duration-300">LOGOUT</button>
+                            <button type="submit"
+                                class="py-2 px-4 rounded bg-(--status-danger) text-white text-2xl max-xl:text-base font-bold hover:scale-105 transition-transform duration-300">LOGOUT</button>
                         </form>
                     </li>
                 </ul>
@@ -26,7 +32,8 @@
 
         <!-- Mobile hamburger (Flowbite drawer trigger) -->
         <div class="md:hidden">
-            <button data-drawer-target="drawer-navigation" data-drawer-show="drawer-navigation" aria-controls="drawer-navigation" aria-label="Open navigation"
+            <button data-drawer-target="drawer-navigation" data-drawer-show="drawer-navigation"
+                aria-controls="drawer-navigation" aria-label="Open navigation"
                 class="p-2 rounded focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white">
                 <!-- simple hamburger icon -->
                 <svg id="hamburgerIcon" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none"
@@ -38,8 +45,9 @@
     </div>
 
     <!-- Flowbite Drawer (mobile sidebar) -->
-    <div id="drawer-navigation" class="fixed top-0 left-0 z-50 h-screen p-4 overflow-y-auto transition-transform -translate-x-full bg-stone-900 text-white w-64"
-         tabindex="-1" aria-labelledby="drawer-navigation-label">
+    <div id="drawer-navigation"
+        class="fixed top-0 left-0 z-50 h-screen p-4 overflow-y-auto transition-transform -translate-x-full bg-stone-900 text-white w-64"
+        tabindex="-1" aria-labelledby="drawer-navigation-label">
         <div class="flex items-center justify-between">
             <div id="drawer-navigation-label" class="text-2xl font-bold">Cho's Studio</div>
             <button data-drawer-hide="drawer-navigation" aria-label="Close navigation"
@@ -52,13 +60,20 @@
         </div>
         <nav class="mt-4 p-4 text-lg">
             <ul class="flex flex-col gap-4">
-                <li><a href="" class="block {{ request()->routeIs('artist.gallery') ? 'text-yellow-400 font-bold' : '' }}">Gallery</a></li>
-                <li><a href="{{ route('artist.adoptions') }}" class="block {{ request()->routeIs('artist.adoptions') ? 'text-yellow-400 font-bold' : '' }}">Adoptions</a></li>
-                <li><a href="{{ route('artist.commisions') }}" class="block {{ request()->routeIs('artist.commisions') ? 'text-yellow-400 font-bold' : '' }}">Commisions</a></li>
+                <li><a href=""
+                        class="block {{ request()->routeIs('artist.gallery') ? 'text-yellow-400 font-bold' : '' }}">Gallery</a>
+                </li>
+                <li><a href="{{ route('artist.adoptions') }}"
+                        class="block {{ request()->routeIs('artist.adoptions') ? 'text-yellow-400 font-bold' : '' }}">Adoptions</a>
+                </li>
+                <li><a href="{{ route('artist.commissions') }}"
+                        class="block {{ request()->routeIs('artist.commissions') ? 'text-yellow-400 font-bold' : '' }}">Commissions</a>
+                </li>
                 <li>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="w-full text-left py-2 px-3 rounded bg-[var(--status-danger)] text-white">Logout</button>
+                        <button type="submit"
+                            class="w-full text-left py-2 px-3 rounded bg-[var(--status-danger)] text-white">Logout</button>
                     </form>
                 </li>
             </ul>
@@ -69,7 +84,7 @@
     <style>
         /* Make drawer backdrop lighter */
         [data-drawer-backdrop] {
-            background-color: rgba(0,0,0,0.3) !important;
+            background-color: rgba(0, 0, 0, 0.3) !important;
         }
     </style>
 

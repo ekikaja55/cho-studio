@@ -17,7 +17,6 @@ class MemberSeeder extends Seeder
         // Data dummy member yang sudah ditentukan
         $members = [
             [
-                'name' => 'Brenda Violint',
                 'username' => 'cholazey',
                 'email' => 'cholazey@gmail.com',
                 'password_plain' => 'mysecretart', 
@@ -27,7 +26,6 @@ class MemberSeeder extends Seeder
                 'role' => 'artist', // Ditetapkan sebagai ARTIST
             ],
             [
-                'name' => 'Klien VIP',
                 'username' => 'klien_vip',
                 'email' => 'vip.client@gmail.com',
                 'password_plain' => 'vip_client_pass',
@@ -37,7 +35,6 @@ class MemberSeeder extends Seeder
                 'role' => 'client', // Ditetapkan sebagai CLIENT
             ],
             [
-                'name' => 'Pengguna Biasa',
                 'username' => 'user_biasa',
                 'email' => 'biasa@gmail.com',
                 'password_plain' => 'user_pass456',
@@ -50,7 +47,6 @@ class MemberSeeder extends Seeder
 
         foreach ($members as $memberData) {
             DB::table('members')->insert([
-                'name' => $memberData['name'],
                 'username' => $memberData['username'],
                 'email' => $memberData['email'],
                 'password' => Hash::make($memberData['password_plain']), // Hashing password

@@ -1,6 +1,22 @@
 @extends('template')
 
 @section('content')
+    <style>
+        /* Prevent browser autofill from changing background color */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus,
+        input:-webkit-autofill:active {
+            -webkit-box-shadow: 0 0 0 30px #a2e1db inset !important;
+            -webkit-text-fill-color: #000 !important;
+        }
+
+        /* For other browsers */
+        input:autofill {
+            background-color: #a2e1db !important;
+        }
+    </style>
+
     <div class="flex justify-center items-center min-h-screen py-8">
         <div
             class="flex flex-col relative justify-center items-center bg-[#f0ebe3] w-[95%] md:w-[85%] lg:w-[80%] min-h-[90vh] sm:min-h-[85vh] md:min-h-[80vh] p-4 sm:p-6 md:p-8 rounded-3xl border-4 border-black">
@@ -23,13 +39,11 @@
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <!-- Basic Information -->
                     <div class="space-y-4">
-                        <h3 class="font-[HammersmithOne-Regular] text-xl font-semibold text-center text-gray-800 mb-1">Basic Information</h3>
-                        <p class="font-[HammersmithOne-Regular] text-sm text-center text-gray-600 mb-4">Please provide your basic details below</p>
+                        <h3 class="font-[HammersmithOne-Regular] text-xl font-semibold text-center text-gray-800 mb-1">Basic
+                            Information</h3>
+                        <p class="font-[HammersmithOne-Regular] text-sm text-center text-gray-600 mb-4">Please provide your
+                            basic details below</p>
                         <div class="space-y-4">
-                            <input
-                                class="bg-[#a2e1db] font-[HammersmithOne-Regular] placeholder-[#477c77] rounded-2xl p-4 text-base w-full focus:outline-none focus:ring-4 focus:ring-[#477c77] focus:border-transparent transition-all duration-200"
-                                type="text" name="name" id="name" placeholder="Full Name"
-                                value="{{ old('name') }}">
                             <input
                                 class="bg-[#a2e1db] font-[HammersmithOne-Regular] placeholder-[#477c77] rounded-2xl p-4 text-base w-full focus:outline-none focus:ring-4 focus:ring-[#477c77] focus:border-transparent transition-all duration-200"
                                 type="text" name="username" id="username" placeholder="Username">
@@ -48,8 +62,10 @@
 
                     <!-- Contact Information -->
                     <div class="space-y-4">
-                        <h3 class="font-[HammersmithOne-Regular] text-xl font-semibold text-center text-gray-800 mb-1">Contact Information</h3>
-                        <p class="font-[HammersmithOne-Regular] text-sm text-center text-gray-600 mb-4">Please provide at least one contact method below
+                        <h3 class="font-[HammersmithOne-Regular] text-xl font-semibold text-center text-gray-800 mb-1">
+                            Contact Information</h3>
+                        <p class="font-[HammersmithOne-Regular] text-sm text-center text-gray-600 mb-4">Please provide at
+                            least one contact method below
                         </p>
 
                         <div class="space-y-4">
@@ -140,13 +156,12 @@
                 e.preventDefault();
 
                 const username = $('#username').val().trim();
-                const name = $('#name').val().trim();
                 const email = $('#email').val().trim();
                 const password = $('#password').val();
                 const confirmPassword = $('#password_confirmation').val();
 
                 // Basic validation
-                if (username === '' || name === '' || email === '' || password === '' || confirmPassword ===
+                if (username === '' || email === '' || password === '' || confirmPassword ===
                     '') {
                     notie.alert({
                         type: 'error',
@@ -180,7 +195,7 @@
                 const hasLineId = lineIdCheckbox.is(':checked') && $.trim(lineIdInput.val()) !== '';
                 const hasPhone = phoneCheckbox.is(':checked') && $.trim(phoneInput.val()) !== '';
                 const hasInstagram = instagramCheckbox.is(':checked') && $.trim(instagramInput.val()) !==
-                '';
+                    '';
 
                 if (!hasLineId && !hasPhone && !hasInstagram) {
                     notie.alert({

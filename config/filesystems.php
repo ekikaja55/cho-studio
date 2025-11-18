@@ -56,6 +56,14 @@ return [
             'throw' => false,
         ],
 
+        'adoptions' => [
+            'driver' => 'local',
+            // is relative to the project's public folder.
+            'root' => public_path(),
+            // The controller streaming still acts as a gatekeeper, but use caution.
+            'visibility' => 'public',   
+        ],
+
     ],
 
     /*

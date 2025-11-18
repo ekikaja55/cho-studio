@@ -7,9 +7,11 @@ use App\Models\Adoption;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\NewAdoptionNotification;
+use App\Mail\NewAdoptionNotification; // Pastikan Anda sudah membuat Mailable ini
+use Illuminate\Support\Facades\Log;
 use App\Mail\AdminAdoptionNotification;
-use App\Mail\AdoptionConfirmation; 
+use App\Mail\AdoptionConfirmation;
+use App\Mail\AdoptionDeliveryMail;
 
 class GalleryPageController extends Controller
 {
@@ -73,7 +75,7 @@ class GalleryPageController extends Controller
                 }
             }
 
-            \Log::warning('Adoption validation failed', [
+            Log::warning('Adoption validation failed', [
                 'errors' => $validator->errors()->toArray(),
                 'request_keys' => array_keys($request->all()),
                 'has_file' => $request->hasFile('paymentProof'),
@@ -121,7 +123,7 @@ class GalleryPageController extends Controller
         // Send emails: admin notification + buyer confirmation
         try {
             // Admin notification
-          \Log::info('Queueing emails for adoption ID: ' . $adoption->adoption_id);
+          Log::info('Queueing emails for adoption ID: ' . $adoption->adoption_id);
             if ($adminEmail) {
                 Mail::to($adminEmail)->queue(new AdminAdoptionNotification($adoption));
             }
@@ -130,7 +132,7 @@ class GalleryPageController extends Controller
             }
         } catch (\Exception $e) {
             // don't fail the request — log the error
-            \Log::error('Failed to queue email for adoption ID ' . $adoption->adoption_id . ': ' . $e->getMessage());
+            Log::error('Failed to queue email for adoption ID ' . $adoption->adoption_id . ': ' . $e->getMessage());
         }
 
         return response()->json(['success' => true, 'message' => 'Submission successful!']);
@@ -155,7 +157,7 @@ class GalleryPageController extends Controller
         ]);
 
         // Send email
-        Mail::to($adoption->email)->send(new NewAdoptionMail($adoption));
+        Mail::to($adoption->email)->send(new AdoptionDeliveryMail($adoption));
 
         return back()->with('success', 'Email sent successfully!');
     }

@@ -136,7 +136,7 @@
     <h1 class="text-2xl font-bold mb-4">Recent Works</h1>
 
     <div class="flex items-center gap-4">
-        {{-- Static selected art --}}
+        {{-- Sselected art --}}
         <div id="selectedArt" class="flex flex-col items-center w-1/4 transition-all duration-500">
             <img id="selectedImage" src="{{ $designs[0]['image_url'] }}" alt="Selected Art"
                  class="rounded-md border-2 border-black w-full h-auto object-cover shadow-lg">

@@ -1,102 +1,80 @@
 @extends('member.member_template')
 
 @section('content')
-<div class="flex justify-center items-center  h-[89vh] overflow-hidden ">
-    <div class="flex flex-col w-[85vw] max-h-[80vh] bg-[#f0ebe3] outline-4 rounded-2xl overflow-y-auto font-[HammersmithOne-Regular] p-10">
-        {{-- Header --}}
-      <div class="flex flex-col lg:flex-row justify-between items-center mb-6 space-y-4 lg:space-y-0">
+    <div class="flex justify-center items-center font-[HammersmithOne-Regular] overflow-auto px-30 py-20 max-md:p-10 max-sm:p-5"
+        style="height: calc(100vh - 80px)">
 
-            <h1 class="text-2xl text-[#2c2c2c]">History (Payment)</h1>
+        {{-- The main wrapper now holds the data attributes for JavaScript --}}
+        <div
+            class="w-full h-full bg-[var(--color-background)] shadow-2xl border-3 border-stone-900 rounded-2xl p-6 relative overflow-hidden flex flex-col">
 
-            <div class="flex items-center space-x-2 w-fit justify-end">
-                <span class="text-[#2c2c2c]">Filter :</span>
-                <div class="relative">
-                    <select id="filterSelect"
-                        class="appearance-none bg-[#c8f6e7] w-full text-[#2c2c2c] rounded px-4 py-2 pr-8 focus:outline-none cursor-pointer font-[HammersmithOne-Regular]">
-                        <option value="recently" selected>recently add</option>
-                        <option value="commission">commission</option>
-                        <option value="oc art">oc art</option>
-                        <option value="pending">pending</option>
-                        <option value="on progress">on progress</option>
-                        <option value="finished">finished</option>
-                        <option value="confirmed">confirmed</option>
-                    </select>
-                    <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 transform -translate-y-1/2 text-[#2c2c2c]"></i>
+            {{-- header --}}
+            <div class="flex flex-col gap-6 mb-4 md:flex-row md:items-center md:justify-between relative z-10 flex-none">
+                <h1 class="text-4xl font-bold text-stone-900 flex items-center">History</h1>
+                <div
+                    class="flex flex-col gap-5 md:flex-row md:items-center bg-white/80 backdrop-blur-sm rounded-xl p-4 shadow-lg border border-stone-200">
+
+                    {{-- (Search removed) --}}
+
+                    {{-- Main Filter (Type) --}}
+                    <div class="flex gap-2">
+                        <label for="filterSelect" class="text-stone-900 font-semibold flex items-center"><i
+                                class="fa-solid fa-filter mr-2 text-stone-600"></i>Filter By</label>
+                        <select name="filter" id="filterSelect"
+                            class="w-full md:w-auto px-3 py-3 border-2 border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-300 focus:border-stone-300 bg-white transition-all duration-300 hover:shadow-md">
+                            <option value="all" selected>All</option>
+                            <option value="commission">Commission</option>
+                            <option value="adoption">Adoption</option>
+                        </select>
+                    </div>
+
+
+                    {{-- Commission Status Filter (Hidden by default) --}}
+                    <div id="commissionStatusContainer" class="hidden flex gap-2">
+                        <label for="commissionStatusFilter"
+                            class="text-stone-900 font-semibold flex items-center">Commission Status</label>
+                        <select name="commissionStatus" id="commissionStatusFilter"
+                            class="w-full md:w-auto px-3 py-3 border-2 border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-300 focus:border-stone-300 bg-white transition-all duration-300 hover:shadow-md">
+                            <option value="all" selected>All</option>
+                            <option value="pending">Pending</option>
+                            <option value="accepted">Accepted</option>
+                            <option value="declined">Declined</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="review">In Review</option>
+                            <option value="revision">In Revision</option>
+                            <option value="completed">Completed</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                    </div>
+
+                    {{-- Adoption Status Filter (Hidden by default) --}}
+                    <div id="adoptionStatusContainer" class="hidden flex gap-2">
+                        <label for="adoptionStatusFilter" class="text-stone-900 font-semibold flex items-center">Adoption
+                            Status</label>
+                        <select name="adoptionStatus" id="adoptionStatusFilter"
+                            class="w-full md:w-auto px-3 py-3 border-2 border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-300 focus:border-stone-300 bg-white transition-all duration-300 hover:shadow-md">
+                            <option value="all" selected>All</option>
+                            <option value="pending">Pending</option>
+                            <option value="confirmed">Confirmed</option>
+                            <option value="processing">Processing</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="completed">Completed</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        {{-- Cards --}}
-        <div id="historyContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 pr-2">
-            @foreach ($historyData as $item)
-                @php
-                    // Warna berdasarkan tipe
-                    $bgColor = strtolower($item['type']) === 'commision' ? '#e1d8f7' :
-                               (strtolower($item['type']) === 'oc art' ? '#fce0ca' : '#e1d8f7');
+            {{-- History Container and Loading/Error Messages --}}
+            <div id="historyContainer"
+                class="border-2 border-stone-300 bg-white/50 backdrop-blur-sm rounded-xl shadow-inner flex-1 min-h-0 overflow-y-auto p-2">
 
-                    $borderColor = strtolower($item['type']) === 'commision' ? '#ad91f2' :
-                                   (strtolower($item['type']) === 'oc art' ? '#f7c49c' : '#ccc');
-
-                    // Warna tombol status (solid)
-                    $statusColor = match (strtolower($item['status'])) {
-                        'pending' => '#808080',     // abu-abu solid
-                        'on progress' => '#62d6ac', // hijau toska
-                        'confirmed' => '#81e39c',   // hijau muda
-                        'finished' => '#5ad36a',    // hijau terang
-                        default => '#cccccc',
-                    };
-
-                    $statusText = strtolower($item['status']) === 'pending' ? '#ffffff' : '#2c2c2c';
-                @endphp
-
-                <a href="{{ route('member.history_detail', $item['id']) }}"
-                    class="history-card rounded-xl p-4 flex flex-col justify-between transition-all duration-200 hover:scale-105 hover:shadow-lg"
-                    style="background-color: {{ $bgColor }}; border: 3px solid {{ $borderColor }}"
-                    data-type="{{ strtolower($item['type']) }}"
-                    data-status="{{ strtolower($item['status']) }}">
-                    
-                    <div class="text-center">
-                        <h2 class="text-lg text-[#2c2c2c]">{{ $item['type'] }}</h2>
-                        <p class="text-sm text-[#7b61ff] opacity-80">{{ $item['title'] }}</p>
-                    </div>
-
-                    <div class="text-sm text-[#2c2c2c] mt-2 space-y-1">
-                        <p><i class="fa-solid fa-calendar"></i> {{ $item['date'] }}</p>
-                        <p><i class="fa-solid fa-money-bill-wave"></i> {{ $item['price'] }}</p>
-                    </div>
-
-                    <button class="mt-3 rounded-full py-1 px-3 font-bold text-sm"
-                        style="background-color: {{ $statusColor }}; color: {{ $statusText }};">
-                        {{ $item['status'] }}
-                    </button>
-                </a>
-            @endforeach
+            </div>
         </div>
     </div>
-</div>
+@endsection
 
-{{-- Script --}}
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const select = document.getElementById('filterSelect');
-        const cards = document.querySelectorAll('.history-card');
 
-        select.addEventListener('change', function () {
-            const filter = this.value.toLowerCase();
-
-            cards.forEach(card => {
-                const type = card.dataset.type;
-                const status = card.dataset.status;
-
-                if (filter === 'recently') {
-                    card.style.display = 'flex';
-                } else if (type === filter || status === filter) {
-                    card.style.display = 'flex';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        });
-    });
-</script>
+@section('scripts')
+    @vite(['resources/js/member/history.js'])
 @endsection

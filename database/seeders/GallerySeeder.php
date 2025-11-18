@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use App\Models\Gallery;
 use Illuminate\Support\Facades\DB;
 
 class GallerySeeder extends Seeder
@@ -319,3 +320,4 @@ class GallerySeeder extends Seeder
         $this->command->info('✅ GallerySeeder: Dummy gallery data inserted successfully!');
     }
 }
+
