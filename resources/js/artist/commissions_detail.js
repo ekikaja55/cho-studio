@@ -72,6 +72,18 @@ $(document).ready(function () {
     $modalContent.hide();
     $refImageModal.hide();
 
+    // Handle progress image selector change
+    $("#progress-image-selector").change(function () {
+        const selectedIndex = $(this).val();
+        const $containers = $(".progress-image-container");
+        
+        // Hide all containers
+        $containers.addClass("hidden");
+        
+        // Show selected container with fade effect
+        $containers.eq(selectedIndex).removeClass("hidden").fadeIn(200);
+    });
+
     // --- Open Modal Logic ---
     $("#view_ref_image").click(function () {
         $refImageModal.fadeIn(animationSpeed, function () {
