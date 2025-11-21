@@ -20,22 +20,17 @@ class GalleryPageController extends Controller
      */
     public function index()
     {
-        // Fetch all gallery items (controller now exposes full dataset)
-        $allGalleries = Gallery::orderBy('created_at', 'desc')->get();
+        // Fetch all gallery items ordered by newest first
+        $allGallery = Gallery::orderBy('created_at', 'desc')->get();
 
-        // mainAdopted: first item that is reserved or sold (if any)
-        $mainAdopted = $allGalleries->firstWhere('status', 'reserved') ?? $allGalleries->firstWhere('status', 'sold');
+        // available: items that are available for adoption/sale
+        $available = $allGallery->where('status', 'available')->values();
 
-        // nonAdopted: items that are available
-        $nonAdopted = $allGalleries->where('status', 'available')->values();
+        // not_sold: items that are not for sale (not_sold status)
+        $not_sold = $allGallery->where('status', 'not_sold')->values();
 
-        // designs (ready-to-buy): expose all items so view can render badges based on status
-        $designs = $allGalleries;
-
-        // Paid adoption gallery IDs (simple array). We'll let the view combine this with gallery.status
-        $paidIds = Adoption::where('payment_status', 'paid')->pluck('gallery_id')->toArray();
-
-        return view('gallery.gallery', compact('designs', 'mainAdopted', 'nonAdopted', 'paidIds'));
+        // Return only the requested collections: available, not_sold, and allGallery
+        return view('gallery.gallery', compact('available', 'not_sold', 'allGallery'));
     }
 
     /**
@@ -50,13 +45,25 @@ class GalleryPageController extends Controller
             'paymentProof' => 'required|file|mimes:jpeg,png,jpg,webp,svg|max:5120', // max 5MB
         ]);
 
-        
-        // $validator = Validator::make($request->all(), [
-        //     'gallery_id' => 'required|exists:gallery,gallery_id',
-        //     'email' => 'required|email|max:255',
-        //     // allow png/jpg/jpeg + webp/svg; ensure it's a file and limit 5MB
-        //     'paymentProof' => 'required|file|mimes:jpeg,png,jpg,webp,svg|max:5120', // max 5MB
-        // ]);
+        // create new adoption record
+        $adoption = new Adoption();
+        $adoption->gallery_id = $request->gallery_id;
+        $adoption->email = $request->email;
+        $adoption->order_status = 'placed';
+        $adoption->payment_status = 'pending';
+        $adoption->save();
+
+        if ($request->has("paymentProof")) {
+            $uploadPath = public_path('adoption_payment');
+            if (!file_exists($uploadPath)) {
+                mkdir($uploadPath, 0755, true);
+            }
+            $extension = $request->file('paymentProof')->getClientOriginalExtension();
+            $fileName = $adoption->id . '.' . $extension;
+            $request->file('paymentProof')->move($uploadPath, $fileName);
+            $adoption->payment_confirmation = 'adoption_payment/' . $fileName;
+            $adoption->save();
+        }
 
         // if ($validator->fails()) {
         //     // Extra debug for file mime/extension if present (safe to log)

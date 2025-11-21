@@ -28,6 +28,28 @@ class GallerySeeder extends Seeder
                 'status' => 'available',
                 'file_format' => 'JPG',
             ],
+
+            [
+                'title' => 'Coastal Cliffs',
+                'description' => 'Dramatic coastline captured with wide-angle perspective.',
+                'price' => 110000,
+                'status' => 'available',
+                'file_format' => 'JPG',
+            ],
+            [
+                'title' => 'Cityscape at Dusk',
+                'description' => 'Skyline silhouette against a colorful sunset sky.',
+                'price' => 115000,
+                'status' => 'available',
+                'file_format' => 'JPG',
+            ],
+            [
+                'title' => 'Floral Explosion',
+                'description' => 'Vibrant bouquet captured with high saturation and contrast.',
+                'price' => 60000,
+                'status' => 'available',
+                'file_format' => 'PNG',
+            ],
             [
                 'title' => 'Abstract Color Study',
                 'description' => 'Bold brush strokes and layered textures exploring motion and depth.',
@@ -67,45 +89,23 @@ class GallerySeeder extends Seeder
                 'title' => 'Macro: Dew on Petal',
                 'description' => 'Close-up study of texture and color with shallow depth of field.',
                 'price' => 45000,
-                'status' => 'available',
+                'status' => 'not_sold',
                 'file_format' => 'PNG',
             ],
             [
                 'title' => 'Night Traffic Trails',
                 'description' => 'Long exposure capturing movement and urban rhythm.',
                 'price' => 98000,
-                'status' => 'available',
+                'status' => 'not_sold',
                 'file_format' => 'JPG',
             ],
             [
                 'title' => 'Minimal Still Life',
                 'description' => 'Soft light, careful composition, and muted tones for a refined result.',
                 'price' => 53000,
-                'status' => 'available',
+                'status' => 'not_sold',
                 'file_format' => 'PNG',
             ],
-            [
-                'title' => 'Coastal Cliffs',
-                'description' => 'Dramatic coastline captured with wide-angle perspective.',
-                'price' => 110000,
-                'status' => 'available',
-                'file_format' => 'JPG',
-            ],
-            [
-                'title' => 'Cityscape at Dusk',
-                'description' => 'Skyline silhouette against a colorful sunset sky.',
-                'price' => 115000,
-                'status' => 'available',
-                'file_format' => 'JPG',
-            ],
-            [
-                'title' => 'Floral Explosion',
-                'description' => 'Vibrant bouquet captured with high saturation and contrast.',
-                'price' => 60000,
-                'status' => 'available',
-                'file_format' => 'PNG',
-            ],
-            // add more entries as needed...
         ];
 
         $validExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'psd', 'blend'];

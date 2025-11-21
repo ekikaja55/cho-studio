@@ -43,30 +43,29 @@
         </ul>
         <div class="sm:mt-3 py-3 flex-1 h-full flex flex-col gap-6">
             @php
-                // $paidIds disediakan oleh controller: hanya gallery_id yang payment_status == 'paid' AND gallery.status == 'available'
-                $paidIds = $paidIds ?? [];
+                // Controller provides:
+                // - $available: items with status == 'available'
+                // - $not_sold: items with status == 'not_sold'
+                // - $allGallery: all items
+                $available = $available ?? collect();
+                $not_sold = $not_sold ?? collect();
+                $allGallery = $allGallery ?? collect();
             @endphp
 
             {{-- SHOWCASE SECTION --}}
             <div id="galleryShowcaseCustom" class="flex w-full h-full gap-3 sm:gap-4 justify-center items-center pb-4">
-                {{-- Left: single adopted item - featured spotlight --}}
+                {{-- Left: featured available artwork (use first available if present) --}}
                 <div class="flex-shrink-0 w-[45%] sm:w-[48%] h-full flex items-center justify-center">
-                    @if (!empty($mainAdopted))
+                    @if ($available->isNotEmpty())
                         @php
-                            $img = asset($mainAdopted->image_url);
-                            $isSoldMain = in_array($mainAdopted->gallery_id, $paidIds);
+                            $featured = $available->first();
+                            $img = asset($featured->image_url);
                         @endphp
                         <div class="rounded-3xl border-4 border-black shadow-[0.6vh_0.6vh_0_black] w-full h-full overflow-hidden bg-white cursor-pointer relative hover:scale-[1.03] transition-all duration-300 showcase-item group"
-                            data-id="{{ $mainAdopted->gallery_id }}">
-                            <img src="{{ $img }}" data-original-src="{{ $img }}" alt="Adopted Artwork"
+                            data-id="{{ $featured->gallery_id }}">
+                            <img src="{{ $img }}" data-original-src="{{ $img }}" alt="Featured Artwork"
                                 class="object-cover w-full h-full group-hover:brightness-110 transition-all duration-300"
                                 loading="lazy" />
-                            {{-- Sold badge --}}
-                            @if ($isSoldMain)
-                                <div
-                                    class="absolute top-3 left-3 bg-red-600 text-white px-4 py-2 rounded-full text-xs font-bold border-2 border-black shadow-[0.2vh_0.2vh_0_black]">
-                                    SOLD OUT</div>
-                            @endif
                             <div
                                 class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                 <p class="text-white font-bold text-sm truncate">Featured Artwork</p>
@@ -88,10 +87,10 @@
                 <div class="flex flex-col justify-between h-full w-[55%] sm:w-[52%] gap-3 sm:gap-4">
                     {{-- Top row --}}
                     <div class="flex gap-3 sm:gap-4 h-1/2">
-                        @foreach ($nonAdopted->take(2) as $art)
+                        @foreach ($not_sold->take(2) as $art)
                             @php
                                 $img = asset($art->image_url);
-                                $isSold = $art->status === 'sold' || in_array($art->gallery_id, $paidIds);
+                                $isSold = $art->status === 'sold';
                             @endphp
                             <div class="rounded-2xl border-4 border-black shadow-[0.4vh_0.4vh_0_black] w-[49%] h-full overflow-hidden bg-white hover:scale-[1.02] transition-all duration-300 showcase-item group cursor-pointer"
                                 data-id="{{ $art->gallery_id }}">
@@ -109,10 +108,10 @@
                     </div>
                     {{-- Bottom row --}}
                     <div class="flex gap-3 sm:gap-4 h-1/2">
-                        @foreach ($nonAdopted->skip(2)->take(2) as $art)
+                        @foreach ($not_sold->skip(2)->take(2) as $art)
                             @php
                                 $img = asset($art->image_url);
-                                $isSold = $art->status === 'sold' || in_array($art->gallery_id, $paidIds);
+                                $isSold = $art->status === 'sold';
                             @endphp
                             <div class="rounded-2xl border-4 border-black shadow-[0.4vh_0.4vh_0_black] w-[49%] h-full overflow-hidden bg-white hover:scale-[1.02] transition-all duration-300 showcase-item group cursor-pointer"
                                 data-id="{{ $art->gallery_id }}">

@@ -93,10 +93,10 @@ class ArtistAdoptionDetailController extends Controller
 
             $adoption->delivery_file = $imagePath;
 
-            $fileOrLink = asset($imagePath);
+            // $fileOrLink = asset($imagePath);
         } else if ($request->delivery_type == 'link' && $request->has('delivery_link')) {
             $adoption->delivery_file = $request->delivery_link;
-            $fileOrLink = $request->delivery_link;
+            // $fileOrLink = $request->delivery_link;
         } else {
             return response()->json(['error' => 'No file or link provided'], 422);
         }
