@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Adoption; // <-- TAMBAHKAN INI
 
-class AdminAdoptionNotification extends Mailable implements ShouldQueue // <-- Terapkan ShouldQueue
+class AdminAdoptionNotification extends Mailable 
 {
     use Queueable, SerializesModels;
 

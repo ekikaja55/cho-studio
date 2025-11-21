@@ -22,12 +22,12 @@ class GalleryPageController extends Controller
     public function index()
     {
         // Ambil semua gallery yang statusnya 'available' sebagai "adopted" di konteks Anda
-        $adopted = Gallery::whereIn('status', ['available','sold'])
+        $adopted = Gallery::whereIn('status', ['reserved','sold'])
             ->orderBy('updated_at', 'desc')
             ->get();
 
         // Semua gallery yang berstatus 'archived' dianggap non-adopted
-        $nonAdopted = Gallery::where('status', 'archived')
+        $nonAdopted = Gallery::where('status', ['available','not_sold'])
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -40,7 +40,7 @@ class GalleryPageController extends Controller
         // Daftar gallery_id yang sudah lunas (payment_status = 'paid') dan gallery masih 'available'
         $paidIdsRaw = Adoption::where('payment_status', 'paid')->pluck('gallery_id')->toArray();
         $paidIds = Gallery::whereIn('gallery_id', $paidIdsRaw)
-            ->where('status', 'available')
+            ->where('status', ['available','not_sold'])
             ->pluck('gallery_id')
             ->toArray();
 
@@ -125,10 +125,10 @@ class GalleryPageController extends Controller
             // Admin notification
           Log::info('Queueing emails for adoption ID: ' . $adoption->adoption_id);
             if ($adminEmail) {
-                Mail::to($adminEmail)->queue(new AdminAdoptionNotification($adoption));
+                Mail::to($adminEmail)->send(new AdminAdoptionNotification($adoption));
             }
             if ($buyerEmail) {
-                Mail::to($buyerEmail)->queue(new AdoptionConfirmation($adoption));
+                Mail::to($buyerEmail)->send(new AdoptionConfirmation($adoption));
             }
         } catch (\Exception $e) {
             // don't fail the request — log the error
@@ -147,6 +147,9 @@ class GalleryPageController extends Controller
     public function processAdoption(Request $request, $id)
     {
         $gallery = Gallery::findOrFail($id);
+        Gallery::where('id', $request->$id)->update([
+            'status' => 'reserved'
+        ]);
         
         $adoption = Adoption::create([
             'gallery_id' => $gallery->id,

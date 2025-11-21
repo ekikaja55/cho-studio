@@ -60,8 +60,8 @@
         </div>
         <nav class="mt-4 p-4 text-lg">
             <ul class="flex flex-col gap-4">
-                <li><a href=""
-                        class="block {{ request()->routeIs('artist.gallery') ? 'text-yellow-400 font-bold' : '' }}">Gallery</a>
+                <li><a href="{{ route('artist.gallery') }}"
+                    class="block {{ request()->routeIs('artist.gallery') ? 'text-yellow-400 font-bold' : '' }}">Gallery</a>
                 </li>
                 <li><a href="{{ route('artist.adoptions') }}"
                         class="block {{ request()->routeIs('artist.adoptions') ? 'text-yellow-400 font-bold' : '' }}">Adoptions</a>

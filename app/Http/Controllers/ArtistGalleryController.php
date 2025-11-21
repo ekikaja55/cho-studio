@@ -15,7 +15,7 @@ class ArtistGalleryController extends Controller
     public function index()
     {
         // Ambil data gallery dan relasi adopsi (jika ada)
-        $galleries = Gallery::where('status', 'available')->get();
+        $galleries = Gallery::all();
         $adoptions = Adoption::with('gallery')->get();
 
         // Gabungkan data jika perlu (contoh: tampilkan semua gallery dengan status)
@@ -23,11 +23,11 @@ class ArtistGalleryController extends Controller
             $adoption = $adoptions->firstWhere('gallery_id', $item->gallery_id);
             return [
                 'gallery_id' => $item->gallery_id,
-                'image_url' => $item->image_url,
+                'image_url' => asset($item->image_url),
                 'title' => $item->title,
                 'description' => $item->description,
                 'price' => $item->price,
-                'file_type' => $item->file_type,
+                'file_format' => $item->file_format,
                 'purchase' => $item->purchase,
                 'status' => $adoption ? $adoption->order_status : 'available'
             ];
@@ -42,7 +42,7 @@ class ArtistGalleryController extends Controller
 
         // hapus file gambar
         if ($gallery->image_url) {
-            Storage::disk('public')->delete(str_replace('/storage/', '', $gallery->image_url));
+            Storage::disk('public')->delete(asset($gallery->image_url));
         }
 
         $gallery->delete();
@@ -68,11 +68,16 @@ class ArtistGalleryController extends Controller
         // kalau user upload gambar baru
         if ($request->hasFile('image')) {
             // hapus gambar lama
-            if ($gallery->image_url) {
-                Storage::disk('public')->delete(str_replace('/storage/', '', $gallery->image_url));
+            if ($gallery->image_url && file_exists(asset($gallery->image_url))) {
+                unlink(asset($gallery->image_url));
             }
-            $path = $request->file('image')->store('gallery', 'public');
-            $gallery->image_url = Storage::url($path);
+
+            $filename = time() . '.' . $request->file('image')->getClientOriginalExtension();
+            $request->file('image')->move(asset('gallery_image'), $filename);
+
+            $gallery->image_url = 'gallery_image/' . $filename;
+
+
         }
 
         // update data lainnya
@@ -87,7 +92,15 @@ class ArtistGalleryController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Gallery updated successfully.',
-            'gallery' => $gallery,
+            'gallery' => [
+                'gallery_id' => $gallery->gallery_id,
+                'image_url' => asset($gallery->image_url),
+                'title' => $gallery->title,
+                'description' => $gallery->description,
+                'price' => $gallery->price,
+                'file_format' => $gallery->file_format,
+            ],
+
         ]);
     }
 
@@ -105,10 +118,11 @@ class ArtistGalleryController extends Controller
             'image' => 'required|image|mimes:png,jpg,jpeg|max:5120',
         ]);
 
-        // Store image on public disk inside 'gallery' folder
-        $path = $request->file('image')->store('gallery', 'public');
-        // Use Storage::url when returning to views that expect a full URL
-        $imageUrl = Storage::url($path);
+        $filename = time() . '.' . $request->file('image')->getClientOriginalExtension();
+        $request->file('image')->move(public_path('gallery_image'), $filename);
+
+        $imageUrl = 'gallery_image/' . $filename;
+
 
         $gallery = Gallery::create([
             'title' => $validated['title'],
@@ -123,7 +137,7 @@ class ArtistGalleryController extends Controller
             'success' => true,
             'gallery' => [
                 'gallery_id' => $gallery->gallery_id,
-                'image_url' => $gallery->image_url,
+                'image_url' =>asset($gallery->image_url),
                 'title' => $gallery->title,
                 'description' => $gallery->description,
                 'price' => $gallery->price,

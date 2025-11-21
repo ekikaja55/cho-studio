@@ -49,13 +49,6 @@
                 </ul>
                 <div class="sm:mt-4 flex-1 h-full">
                     @php
-                        // use controller-provided variables:
-                        // $mainAdopted  -> single adopted item (or null)
-                        // $nonAdopted   -> collection of non-adopted gallery items
-                    @endphp
-
-                    {{-- bagian showcase: tambahkan data-format pada semua showcase-item --}}
-                    @php
                         // $paidIds disediakan oleh controller: hanya gallery_id yang payment_status == 'paid' AND gallery.status == 'available'
                         $paidIds = $paidIds ?? [];
                     @endphp
@@ -64,11 +57,9 @@
                         <div class="flex-shrink-0 w-[48%] h-full flex items-center justify-center"> {{-- kiri sedikit diperbesar --}}
                             @if(!empty($mainAdopted))
                                 @php
-                                    $img = preg_match('/^https?:\/\//', $mainAdopted->image_url) || str_starts_with($mainAdopted->image_url, '/storage')
-                                        ? $mainAdopted->image_url
-                                        : Storage::url($mainAdopted->image_url);
+                                    $img = asset( $mainAdopted->image_url);
 
-                                    $isSoldMain = ($mainAdopted->status === 'sold') || in_array($mainAdopted->gallery_id, $paidIds);
+                                    $isSoldMain = in_array($mainAdopted->gallery_id, $paidIds);
                                 @endphp
                                 <div
                                     class="rounded-2xl border-4 border-black shadow-lg w-full h-full overflow-hidden bg-white cursor-pointer relative hover:scale-[1.02] transition-transform duration-300 showcase-item"
@@ -95,9 +86,7 @@
                             <div class="flex gap-2 h-1/2"> {{-- gap antar gambar kanan dikurangi --}}
                                 @foreach($nonAdopted->take(2) as $art)
                                     @php
-                                        $img = preg_match('/^https?:\/\//', $art->image_url) || str_starts_with($art->image_url, '/storage')
-                                            ? $art->image_url
-                                            : Storage::url($art->image_url);
+                                        $img = asset( $art->image_url);
                                         $isSold = ($art->status === 'sold') || in_array($art->gallery_id, $paidIds);
                                     @endphp
                                     <div
@@ -105,7 +94,7 @@
                                         data-id="{{ $art->gallery_id }}"
                                         data-title="{{ $art->title }}"
                                         data-price="{{ $art->price }}"
-                                        data-format="{{ $art->file_format }}"  {{-- <--- tambah data-format --}}
+                                        data-format="{{ $art->file_format }}"  {{--  tambah data-format --}}
                                         data-image="{{ $img }}">
                                         <img src="{{ $img }}" data-original-src="{{ $img }}" alt="Gallery Artwork" class="object-cover w-full h-full" loading="lazy" />
                                         @if($isSold)
@@ -117,9 +106,7 @@
                             <div class="flex gap-2 h-1/2"> {{-- gap dikurangi --}}
                                 @foreach($nonAdopted->skip(2)->take(2) as $art)
                                     @php
-                                        $img = preg_match('/^https?:\/\//', $art->image_url) || str_starts_with($art->image_url, '/storage')
-                                            ? $art->image_url
-                                            : Storage::url($art->image_url);
+                                        $img = asset( $art->image_url);
                                         $isSold = ($art->status === 'sold') || in_array($art->gallery_id, $paidIds);
                                     @endphp
                                     <div
@@ -127,7 +114,7 @@
                                         data-id="{{ $art->gallery_id }}"
                                         data-title="{{ $art->title }}"
                                         data-price="{{ $art->price }}"
-                                        data-format="{{ $art->file_format }}"  {{-- <--- tambah data-format --}}
+                                        data-format="{{ $art->file_format }}"  {{--  tambah data-format --}}
                                         data-image="{{ $img }}">
                                         <img src="{{ $img }}" data-original-src="{{ $img }}" alt="Gallery Artwork" class="object-cover w-full h-full" loading="lazy" />
                                         @if($isSold)
@@ -190,16 +177,14 @@
                     {{-- RIGHT: GRID with horizontal scroll --}}
                     <div class="flex-1 overflow-hidden">
                         <div id="designGrid"
-                            class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 h-full overflow-y-auto pb-4 pr-2"> {{-- tampilkan semua, 4 kolom di lg, gap-x/gap-y sama --}}
+                            class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 overflow-y-auto pb-4 pr-2 h-fit">
                             @forelse ($designs as $design) {{-- tampilkan semua item --}}
-                            @if(in_array($art->gallery_id, $paidIds))
+                            @if(in_array($design->gallery_id, $paidIds))
                                 <div class="absolute top-2 left-2 bg-red-600 text-white px-2 py-1 rounded-xl text-xs font-bold border border-black">Sold</div>
                             @endif
                                  @php
-                                     $imageUrl = preg_match('/^https?:\/\//', $design->image_url) || str_starts_with($design->image_url, '/storage')
-                                         ? $design->image_url
-                                         : Storage::url($design->image_url);
-                                     $isSoldDesign = ($design->status === 'sold') || in_array($design->gallery_id, $paidIds);
+                                     $imageUrl = asset($design->image_url);
+                                     $isSoldDesign = ($design->status === 'reserved') || in_array($design->gallery_id, $paidIds);
                                  @endphp
                                  <div class="design-item cursor-pointer bg-gradient-to-b from-yellow-100 to-orange-200 rounded-md shadow-[0.4vh_0.4vh_0_black] hover:shadow-[0.6vh_0.6vh_0_black] hover:-translate-y-[0.3vh] transition-all duration-200 aspect-square relative"
                                      data-id="{{ $design->gallery_id }}" data-title="{{ $design->title }}" data-price="Rp {{ number_format($design->price,0,',','.') }}" data-format="{{ $design->file_format }}" data-image="{{ $imageUrl }}">
