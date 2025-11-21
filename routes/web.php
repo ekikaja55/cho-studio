@@ -34,10 +34,10 @@ Route::get('/register', [LoginPageController::class, 'register'])->name('registe
 Route::get('/termsnconditions', [LoginPageController::class, 'termsnconditions'])->name('termsnconditions');
 Route::get('/home', [HomePageController::class, 'index'])->name('home');
 
-
-
 // Route for adoption (purchase) submissions from the public gallery page
 Route::get('/gallery', [GalleryPageController::class, 'index'])->name('gallery');
+// JSON endpoint for gallery item details (safe, minimal payload)
+Route::get('/gallery/json/{id}', [GalleryPageController::class, 'json'])->name('gallery.json');
 Route::post('/gallery/adopt', [GalleryPageController::class, 'store'])->name('gallery.adopt');
 
 Route::post('/login', [LoginPageController::class, 'processLogin'])->name('process_login');

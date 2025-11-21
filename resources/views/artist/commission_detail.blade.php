@@ -209,20 +209,20 @@
 
     <div id="ref-image-modal" class="fixed inset-0 z-50 flex items-center justify-center font-[HammersmithOne-Regular]"
         style="background-color: rgba(30,41,59,0.55); display: none;">
-    <div class="modal-content bg-white rounded-xl shadow-2xl p-8 max-w-1/2 w-full relative">
+        <div class="modal-content bg-white rounded-xl shadow-2xl p-8 relative">
             <button id="close-ref-image-modal"
                 class="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-2xl font-bold">&times;</button>
             <h3 class="text-xl font-bold mb-4 text-blue-700">Reference Image</h3>
             @php
                 $isNetworkImage = filter_var($commission->reference_image, FILTER_VALIDATE_URL);
             @endphp
-            @if($isNetworkImage)
+            @if ($isNetworkImage)
                 <img src="{{ $commission->reference_image }}" alt="Reference Image (Network)"
-                    class="w-full rounded-lg mx-auto border border-green-300 shadow">
+                    class="w-full max-w-xl rounded-lg mx-auto border border-green-300 shadow">
                 <div class="text-xs text-green-700 text-center mt-2">Source: Network Link</div>
             @else
                 <img src="{{ asset($commission->reference_image) }}" alt="Reference Image (Uploaded)"
-                    class="w-full rounded-lg mx-auto border border-blue-200 shadow">
+                    class="w-full max-w-xl rounded-lg mx-auto border border-blue-200 shadow">
                 <div class="text-xs text-blue-700 text-center mt-2">Source: Uploaded File</div>
             @endif
         </div>
