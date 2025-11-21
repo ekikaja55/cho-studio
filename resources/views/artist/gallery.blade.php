@@ -267,14 +267,14 @@ document.addEventListener('DOMContentLoaded', function () {
         submitBtn.disabled = true;
         submitBtn.textContent = editMode ? "Updating..." : "Adding...";
 
-        let url = "/artist/store";
+        let url = "/artist/gallery/store";
         let method = "POST";
 
         if (editMode) {
             url = `/artist/gallery/${currentId}`;
             formData.append("_method", "PUT"); // Laravel override
         }
-
+ 
         try {
             const res = await fetch(url, {
                 method: "POST",
@@ -396,7 +396,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function addCardToGrid(g) {
         const card = document.createElement("div");
-        card.className = "design-item cursor-pointer aspect-square rounded-md shadow";
+        card.className = "design-item cursor-pointer aspect-square bg-gradient-to-b from-yellow-100 to-orange-200 rounded-md shadow-[0.4vh_0.4vh_0_black] hover:shadow-[0.6vh_0.6vh_0_black] hover:-translate-y-[0.3vh] transition-all duration-200";
         card.dataset.id = g.gallery_id;
         card.dataset.image = g.image_url;
         card.dataset.title = g.title || "";
@@ -406,7 +406,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const img = document.createElement("img");
         img.src = g.image_url;
-        img.className = "object-cover w-full h-full";
+        img.className = "rounded-md object-cover w-full h-full border-2 border-black";
 
         card.appendChild(img);
         galleryGrid.prepend(card);
