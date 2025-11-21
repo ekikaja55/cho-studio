@@ -61,7 +61,8 @@
                             <option value="csp">CSP (Clip Studio Paint)</option>
                             <option value="sai">SAI (Paint Tool SAI)</option>
                             <option value="png">PNG</option>
-                            <option value="jpg">JPG / JPEG</option>
+                            <option value="jpg">JPG</option>
+                            <option value="jpeg">JPEG</option>
                             <option value="pdf">PDF (Artbook)</option>
                         </optgroup>
                     </select>
@@ -97,15 +98,15 @@
                 @foreach ($galleryData as $index => $item)
                     <div 
                         class="design-item cursor-pointer aspect-square bg-gradient-to-b from-yellow-100 to-orange-200 rounded-md shadow-[0.4vh_0.4vh_0_black] hover:shadow-[0.6vh_0.6vh_0_black] hover:-translate-y-[0.3vh] transition-all duration-200"
-                        data-index="{{ $index }}"
-                        data-image="{{ $item['image_url'] }}"
+                        data-id="{{ $item['gallery_id'] }}"
+                        data-image="{{ asset(ltrim($item['image_url'], '/'))  }}"
                         data-title="{{ $item['title'] ?? '' }}"
                         data-desc="{{ $item['description'] ?? '' }}"
                         data-price="{{ $item['price'] !== null ? $item['price'] : '' }}"
                         data-purchase="{{ $item['price'] !== null ? 'true' : 'false' }}"
-                        data-file="{{ $item['file_type'] ?? '' }}"
+                        data-file="{{ $item['file_format'] ?? '' }}"
                     >
-                        <img src="{{ $item['image_url'] }}" alt="Image" class="rounded-md object-cover w-full h-full border-2 border-black " onerror="handleBrokenImage(this)">
+                        <img src="{{  asset($item['image_url']) }}" alt="Image" class="rounded-md object-cover w-full h-full border-2 border-black ">
                     </div>
                 @endforeach
             </div>
@@ -142,7 +143,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const priceContainer = document.getElementById('priceContainer');
 
     let editMode = false;
-    let currentIndex = null;
+    let currentId = null;
     let imageFile = null;
 
     // ========== 📂 Drag & Drop ========== //
@@ -207,12 +208,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // ========== 🧾 Klik gambar -> Edit Mode ========== //
     galleryGrid.addEventListener('click', (e) => {
-        const card = e.target.closest('[data-index]');
+        const card = e.target.closest('[data-id]');
         if (!card) return;
 
         resetForm();
         editMode = true;
-        currentIndex = card.dataset.index;
+        currentId = card.dataset.id;
 
         previewImage.src = card.dataset.image;
         previewImage.classList.remove('hidden');
@@ -255,117 +256,84 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // ========== ✨ Validasi & Aksi Form ========== //
-    artworkForm.addEventListener('submit', async (e) => {
+    artworkForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         if (!validateForm()) return;
 
-        // Prepare form data
         const formData = new FormData(artworkForm);
-        if (imageFile) {
-            formData.set('image', imageFile);
-        }
+        if (imageFile) formData.set("image", imageFile);
+        if (!imageFile) formData.delete("image");
 
         submitBtn.disabled = true;
-        submitBtn.textContent = editMode ? 'Updating...' : 'Adding...';
+        submitBtn.textContent = editMode ? "Updating..." : "Adding...";
+
+        let url = "/artist/store";
+        let method = "POST";
+
+        if (editMode) {
+            url = `/artist/gallery/${currentId}`;
+            formData.append("_method", "PUT"); // Laravel override
+        }
 
         try {
-            let res = await fetch(artworkForm.action, {
-                method: 'POST',
+            const res = await fetch(url, {
+                method: "POST",
                 headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
+                    "X-CSRF-TOKEN": csrfToken,
                 },
                 body: formData
             });
 
-            res = fetch(`/artist/gallery/${galleryId}`, {
-                method: 'PUT',
-                headers: { 'X-CSRF-TOKEN': csrfToken },
-                body: formData
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Gallery updated!');
-                    // bisa langsung update tampilan tanpa reload
-                }
-            });
-
-            res = fetch(`/artist/gallery/${galleryId}`, {
-                method: 'DELETE',
-                headers: { 'X-CSRF-TOKEN': csrfToken },
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    document.querySelector(`[data-id="${galleryId}"]`).remove();
-                }
-            });
-
-
-
             const data = await res.json();
-            if (!res.ok || !data.success) {
-                const errors = data.errors || {general: ['Failed to save.']};
-                // Show first error (simple)
-                const firstKey = Object.keys(errors)[0];
-                const firstMsg = Array.isArray(errors[firstKey]) ? errors[firstKey][0] : errors[firstKey];
-                document.querySelector('.error-message').textContent = firstMsg;
+
+            if (!data.success) {
+                alert("Failed to save data");
                 submitBtn.disabled = false;
-                submitBtn.textContent = editMode ? 'Update' : 'Add';
                 return;
             }
 
-            // Insert new card into grid
-            const g = data.gallery;
-            const card = document.createElement('div');
-            card.className = 'design-item cursor-pointer aspect-square bg-gradient-to-b from-yellow-100 to-orange-200 rounded-md shadow-[0.4vh_0.4vh_0_black] hover:shadow-[0.6vh_0.6vh_0_black] hover:-translate-y-[0.3vh] transition-all duration-200';
-            card.dataset.index = g.gallery_id;
-            card.dataset.image = g.image_url;
-            card.dataset.title = g.title || '';
-            card.dataset.desc = g.description || '';
-            card.dataset.price = g.price || '';
-            card.dataset.file = g.file_format || '';
-            card.dataset.purchase = (g.price ? 'true' : 'false');
-
-            const img = document.createElement('img');
-            img.src = g.image_url;
-            // If the image fails to load, remove the card and log to console
-            img.onerror = function() {
-                try {
-                    console.error('Broken image detected for newly added gallery item', { id: g.gallery_id, src: g.image_url });
-                    if (card && card.parentNode) card.parentNode.removeChild(card);
-                } catch (e) { console.error('Error removing broken image card', e); }
-            };
-            if (g.price) {
-                document.querySelector('#price').disabled = false;
-                document.querySelector('#price').value = g.price;
+            if (!editMode) {
+                addCardToGrid(data.gallery);
+            } else {
+                updateCardInGrid(data.gallery);
             }
 
-            img.alt = 'Image';
-            img.className = 'rounded-md object-cover w-full h-full border-2 border-black';
-            card.appendChild(img);
-
-            galleryGrid.prepend(card);
-
             resetForm();
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Add';
-
         } catch (err) {
             console.error(err);
-            document.querySelector('.error-message').textContent = 'Unexpected error. Try again.';
-            submitBtn.disabled = false;
-            submitBtn.textContent = editMode ? 'Update' : 'Add';
+            alert("Unexpected error");
+        }
+
+        submitBtn.disabled = false;
+        submitBtn.textContent = editMode ? "Update" : "Add";
+    });
+
+
+
+    deleteBtn.addEventListener("click", async () => {
+        if (!editMode) return;
+        if (!confirm("Delete this item?")) return;
+
+        try {
+            const res = await fetch(`/artist/gallery/${currentId}`, {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": csrfToken,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ _method: "DELETE" }),
+            });
+
+            const data = await res.json();
+            if (data.success) {
+                document.querySelector(`[data-id="{{ $item['gallery_id'] }}"]`).remove();
+                resetForm();
+            }
+        } catch (err) {
+            console.error(err);
         }
     });
 
-    deleteBtn.addEventListener('click', () => {
-        if (!editMode) return;
-        if (confirm('Are you sure you want to delete this item?')) {
-            alert(`Simulating DELETE for item index: ${currentIndex}`);
-            resetForm();
-        }
-    });
 
     clearBtn.addEventListener('click', resetForm);
 
@@ -416,7 +384,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function resetForm() {
         artworkForm.reset();
         editMode = false;
-        currentIndex = null;
+        currentId = null;
         
         resetImagePreview();
         priceContainer.classList.add('hidden');
@@ -425,6 +393,40 @@ document.addEventListener('DOMContentLoaded', function () {
         deleteBtn.classList.add('hidden');
         document.querySelectorAll('.border.rounded-lg').forEach(clearInputError);
     }
+
+    function addCardToGrid(g) {
+        const card = document.createElement("div");
+        card.className = "design-item cursor-pointer aspect-square rounded-md shadow";
+        card.dataset.id = g.gallery_id;
+        card.dataset.image = g.image_url;
+        card.dataset.title = g.title || "";
+        card.dataset.desc = g.description || "";
+        card.dataset.price = g.price || "";
+        card.dataset.file = g.file_format || "";
+
+        const img = document.createElement("img");
+        img.src = g.image_url;
+        img.className = "object-cover w-full h-full";
+
+        card.appendChild(img);
+        galleryGrid.prepend(card);
+    }
+
+    function updateCardInGrid(g) {
+        const card = document.querySelector(`[data-id="${g.gallery_id}"]`);
+        if (!card) return;
+
+        card.dataset.image = g.image_url;
+        card.dataset.title = g.title;
+        card.dataset.desc = g.description;
+        card.dataset.price = g.price;
+        card.dataset.file = g.file_format;
+
+        const img = card.querySelector("img");
+        img.src = g.image_url;
+    }
+
+
 });
 </script>
-@endsection
+@endsection 

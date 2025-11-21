@@ -33,8 +33,11 @@ Route::get('/login', [LoginPageController::class, 'login'])->name('login');
 Route::get('/register', [LoginPageController::class, 'register'])->name('register');
 Route::get('/termsnconditions', [LoginPageController::class, 'termsnconditions'])->name('termsnconditions');
 Route::get('/home', [HomePageController::class, 'index'])->name('home');
-Route::get('/gallery', [GalleryPageController::class, 'index'])->name('gallery');
+
+
+
 // Route for adoption (purchase) submissions from the public gallery page
+Route::get('/gallery', [GalleryPageController::class, 'index'])->name('gallery');
 Route::post('/gallery/adopt', [GalleryPageController::class, 'store'])->name('gallery.adopt');
 
 Route::post('/login', [LoginPageController::class, 'processLogin'])->name('process_login');
@@ -58,8 +61,8 @@ Route::prefix('artist')->middleware(['auth', 'role:artist'])->group(function () 
     Route::post('/commissions/upload/{commissionId}', [ArtistCommissionDetailController::class, 'upload_image'])->name('artist.commission_upload');
 
     // adoptions
-    Route::put('/artist/gallery/{id}', [ArtistGalleryController::class, 'update'])->name('artist.gallery.update');
-    Route::delete('/artist/gallery/{id}', [ArtistGalleryController::class, 'destroy'])->name('artist.gallery.destroy');
+    Route::put('/gallery/{id}', [ArtistGalleryController::class, 'update'])->name('artist.gallery.update');
+    Route::delete('/gallery/{id}', [ArtistGalleryController::class, 'destroy'])->name('artist.gallery.destroy');
     Route::post('/gallery/store', [ArtistGalleryController::class, 'store'])->name('artist.gallery.store');
     Route::get('/adoptions', [ArtistAdoptionController::class, 'index'])->name('artist.adoptions');
     Route::get('/getAdoptions', [ArtistAdoptionController::class, 'getAdoptions'])->name('artist.getAdoptions');
