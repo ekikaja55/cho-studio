@@ -365,6 +365,21 @@ $(document).ready(function () {
             formData.append("delivery_type", "upload_file");
             formData.append("delivery_file", fileInput.files[0]);
         } else {
+            // check if link is provided
+            const link = $("#download_link").val().trim();
+            if (link === "") {
+                Swal.fire({
+                    icon: "error",
+                    title: "No link provided",
+                    text: "Please provide a download link before sending.",
+                    customClass: {
+                        popup: "custom-swal-popup",
+                        title: "custom-swal-title",
+                        htmlContainer: "custom-swal-text",
+                    },
+                });
+                return;
+            }
             formData.append("delivery_type", "link");
             formData.append("delivery_link", $("#download_link").val());
         }
