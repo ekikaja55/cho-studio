@@ -1,6 +1,6 @@
 {{-- section READY TO BUY --}}
 <div id="readyToBuy"
-    class="mt-16 bg-[#f0ebe3] rounded-3xl border-4 border-black shadow-[3vh_3vh_0_black] p-6 sm:p-10 flex flex-col h-[80vh]">
+    class="my-16 bg-[#f0ebe3] rounded-3xl border-4 border-black shadow-[3vh_3vh_0_black] p-6 sm:p-10 flex flex-col h-[100vh]">
     <h2 class="text-2xl sm:text-3xl text-center mb-8 text-gray-800">
         READY-TO-BUY DESIGNS
     </h2>
