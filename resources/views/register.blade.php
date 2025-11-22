@@ -109,7 +109,13 @@
                         </div>
                     </div>
                 </div>
-
+                <div class="flex items-center gap-3 mt-4">
+                    <input type="checkbox" id="agree_terms" class="w-5 h-5"
+                        {{ request()->has('accepted') ? 'checked' : '' }}>
+                    <label for="agree_terms" class="text-base font-semibold text-gray-800">
+                        I agree to the <a href="{{ route('termsnconditions') }}" class="text-blue-600 underline">Terms & Conditions</a>
+                    </label>
+                </div>
                 <div class="flex justify-center mt-8">
                     <button type="submit"
                         class="font-[HammersmithOne-Regular] bg-[#b4a6d5] w-full max-w-md py-4 text-xl rounded-2xl border-3 border-black hover:bg-[#8b7db8] focus:outline-none focus:ring-4 focus:ring-[#ffac81] transition-colors duration-300 ease-in-out">Register</button>
@@ -128,6 +134,7 @@
 
 @section('scripts')
     <script>
+        
         $(document).ready(function() {
             const lineIdCheckbox = $('#has_line_id');
             const phoneCheckbox = $('#has_phone');
@@ -166,6 +173,15 @@
                     notie.alert({
                         type: 'error',
                         text: 'Please fill in all required fields.',
+                        time: 5,
+                    });
+                    return;
+                }
+
+                if (!$('#agree_terms').is(':checked')) {
+                    notie.alert({
+                        type: 'error',
+                        text: 'You must accept the Terms & Conditions before registering.',
                         time: 5,
                     });
                     return;

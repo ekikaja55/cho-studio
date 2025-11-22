@@ -15,7 +15,7 @@ class ArtistGalleryController extends Controller
     public function index()
     {
         // Ambil data gallery dan relasi adopsi (jika ada)
-        $galleries = Gallery::all();
+        $galleries = Gallery::orderBy('updated_at', 'desc')->get();
         $adoptions = Adoption::with('gallery')->get();
 
         // Gabungkan data jika perlu (contoh: tampilkan semua gallery dengan status)
@@ -65,22 +65,22 @@ class ArtistGalleryController extends Controller
             'image' => 'nullable|image|mimes:png,jpg,jpeg|max:5120',
         ]);
 
-        // kalau user upload gambar baru
+        // Jika upload gambar baru
         if ($request->hasFile('image')) {
-            // hapus gambar lama
-            if ($gallery->image_url && file_exists(asset($gallery->image_url))) {
-                unlink(asset($gallery->image_url));
+
+            // Hapus gambar lama (gunakan public_path!)
+            if ($gallery->image_url && file_exists(public_path($gallery->image_url))) {
+                unlink(public_path($gallery->image_url));
             }
 
+            // Simpan gambar baru
             $filename = time() . '.' . $request->file('image')->getClientOriginalExtension();
-            $request->file('image')->move(asset('gallery_image'), $filename);
+            $request->file('image')->move(public_path('gallery_image'), $filename);
 
             $gallery->image_url = 'gallery_image/' . $filename;
-
-
         }
 
-        // update data lainnya
+        // update data lain
         $gallery->update([
             'title' => $validated['title'],
             'description' => $validated['description'] ?? null,
@@ -100,9 +100,9 @@ class ArtistGalleryController extends Controller
                 'price' => $gallery->price,
                 'file_format' => $gallery->file_format,
             ],
-
         ]);
     }
+
 
 
     /**
