@@ -108,8 +108,7 @@
     });
 
     document.getElementById('acceptBtn').addEventListener('click', () => {
-      // Arahkan ke halaman register Laravel (ubah sesuai rute kamu)
-      window.location.href = "{{ route('register') }}";
+        window.location.href = "{{ route('register') }}?accepted=1";
     });
   </script>
 

@@ -14,6 +14,7 @@ class LoginPageController extends Controller
         return view('login');
     }
 
+
     public function processLogin(Request $request)
     {
         // 1. Validasi input
@@ -61,7 +62,15 @@ class LoginPageController extends Controller
             'username' => $errorMessage,
         ])->withInput();
     }
+    
+    public function showRegister()
+    {
+        if (!request()->has('accepted')) {
+            return redirect()->route('terms');
+        }
 
+        return view('register');
+    }
     public function register()
     {
         return view('register');

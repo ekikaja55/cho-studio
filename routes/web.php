@@ -31,8 +31,10 @@ Route::get('/', function () {
 
 Route::get('/login', [LoginPageController::class, 'login'])->name('login');
 Route::get('/register', [LoginPageController::class, 'register'])->name('register');
+Route::get('/register', [LoginPageController::class, 'showRegister'])->name('register');
 Route::get('/termsnconditions', [LoginPageController::class, 'termsnconditions'])->name('termsnconditions');
 Route::get('/home', [HomePageController::class, 'index'])->name('home');
+
 
 // Route for adoption (purchase) submissions from the public gallery page
 Route::get('/gallery', [GalleryPageController::class, 'index'])->name('gallery');
