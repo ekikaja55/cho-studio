@@ -18,16 +18,41 @@
     </div>
 </div>
 
-{{-- update payment status, if updated turn status to processing --}}
-<button id="confirm-payment-btn" data-adoption-id="{{ $adoption->adoption_id }}"
-    class="group relative w-full px-6 py-3 rounded-xl border-2 border-purple-600 bg-purple-600 text-white font-bold shadow-lg hover:shadow-xl hover:bg-purple-700 hover:border-purple-700 hover:-translate-y-1 transform transition-all duration-300 ease-out">
+{{-- previes of payment proof --}}
+<button id="preview-payment-proof-btn" data-adoption-id="{{ $adoption->adoption_id }}"
+    class="mb-3 group relative w-full px-6 py-3 rounded-xl border-2 border-purple-600 bg-purple-600 text-white font-bold shadow-lg hover:shadow-xl hover:bg-purple-700 hover:border-purple-700 hover:-translate-y-1 transform transition-all duration-300 ease-out">
     <div class="flex items-center justify-center gap-2">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
-            </path>
-        </svg>
-        Confirm Payment
+        View Payment Proof
     </div>
     <div class="absolute inset-0 rounded-xl bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300">
     </div>
 </button>
+
+{{-- update payment status, if updated turn status to processing --}}
+{{-- update payment status, if updated turn status to processing --}}
+<p class="text-sm text-amber-800 mb-3">Review the buyer's uploaded payment proof. If the proof is valid, mark the payment as <strong>Valid</strong> to proceed to file preparation; otherwise mark it as <strong>Not Valid</strong> and request a corrected proof.</p>
+
+<div class="flex gap-2">
+    
+    <button id="confirm-payment-btn" data-adoption-id="{{ $adoption->adoption_id }}"
+        class="group relative w-full px-6 py-3 rounded-xl border-2 border-green-600 bg-green-600 text-white font-bold shadow-lg hover:shadow-xl hover:bg-green-700 hover:border-green-700 hover:-translate-y-1 transform transition-all duration-300 ease-out">
+        <div class="flex items-center justify-center gap-2">
+            Valid
+        </div>
+        <div
+            class="absolute inset-0 rounded-xl bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300">
+        </div>
+    </button>
+
+    <button id="invalidate-payment-btn" data-adoption-id="{{ $adoption->adoption_id }}"
+        class="group relative w-full px-6 py-3 rounded-xl border-2 border-red-600 bg-red-600 text-white font-bold shadow-lg hover:shadow-xl hover:bg-red-700 hover:border-red-700 hover:-translate-y-1 transform transition-all duration-300 ease-out">
+        <div class="flex items-center justify-center gap-2">
+            Not Valid
+        </div>
+        <div
+            class="absolute inset-0 rounded-xl bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300">
+        </div>
+    </button>
+
+
+</div>

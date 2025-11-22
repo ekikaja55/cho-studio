@@ -81,13 +81,9 @@
             </div>
 
             <div class="bg-(--color-background) p-6 min-h-fit border-4 border-stone-900">
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
                     @include('artist.adoption_detail_column.artwork_info', [
-                        'adoption' => $adoption,
-                    ])
-
-                    @include('artist.adoption_detail_column.buyer_info', [
                         'adoption' => $adoption,
                     ])
 
@@ -99,13 +95,7 @@
                                 Actions
                             </h2>
 
-                            @if ($adoption->order_status === 'pending')
-                                {{-- confirm or cancel --}}
-                                @include('artist.adoption_detail_column.actions.pending_actions', [
-                                    'adoption' => $adoption,
-                                ])
-                                
-                            @elseif($adoption->order_status === 'confirmed')
+                            @if ($adoption->order_status === 'placed')
                                 @include('artist.adoption_detail_column.actions.confirmed_actions', [
                                     'adoption' => $adoption,
                                 ])
@@ -134,6 +124,8 @@
             </div>
         </div>
     </div>
+
+    @include('artist.adoption_detail_column.payment_proof_modal', ['adoption' => $adoption])
 @endsection
 
 @section('scripts')

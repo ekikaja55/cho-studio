@@ -53,7 +53,7 @@
         </div>
         <div id="designGrid"
             class="flex-1 min-h-0 overflow-y-auto pr-2 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-4 sm:gap-5 auto-rows-max content-start">
-            @forelse ($allGallery as $design)
+            @forelse ($allGalleryExceptNotSold as $design)
                 @php
                     $imageUrl = asset($design->image_url);
                     $isReservedOrSold = in_array($design->status, ['reserved', 'sold']);

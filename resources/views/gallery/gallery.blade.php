@@ -1,14 +1,22 @@
 @extends('template')
 
 @section('content')
-    {{-- Latar belakang utama --}}
-    <div class="min-h-screen p-2 sm:p-4 mt-4 sm:mt-8 flex justify-center items-start font-[HammersmithOne-Regular]">
-        @include('gallery.showcase')
-        @include('gallery.ready_design')
-        @include('gallery.purchase_modal')
-        @include('gallery.preview_modal')
-    </div>
     <style>
+        .custom-swal-popup {
+            font-family: 'HammersmithOne-Regular', sans-serif;
+        }
+
+        .custom-swal-title {
+            font-size: 24px;
+            font-weight: bold;
+            font-family: 'HammersmithOne-Regular', sans-serif;
+        }
+
+        .custom-swal-text {
+            font-size: 16px;
+            font-family: 'HammersmithOne-Regular', sans-serif;
+        }
+
         /* overlay shown when image fails to load */
         .broken-overlay {
             position: absolute;
@@ -111,6 +119,14 @@
             }
         }
     </style>
+
+    {{-- Latar belakang utama --}}
+    <div class="min-h-screen p-2 sm:p-4 mt-4 sm:mt-8 flex justify-center items-start font-[HammersmithOne-Regular]">
+        @include('gallery.showcase')
+        @include('gallery.ready_design')
+        @include('gallery.purchase_modal')
+        @include('gallery.preview_modal')
+    </div>
 @endsection
 
 @section('scripts')

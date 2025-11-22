@@ -40,6 +40,22 @@ function setOrderStatus(adoptionId, status) {
 }
 
 $(document).ready(function () {
+    $("#preview-payment-proof-btn").click(function () {
+        $("#preview-payment-proof-modal").fadeIn(150, function () {
+            $("#preview-payment-proof-modal")
+                .find(".modal-content")
+                .slideDown(150);
+        });
+    });
+
+    $("#close-preview-payment-proof-modal").click(function () {
+        $("#preview-payment-proof-modal")
+            .find(".modal-content")
+            .slideUp(150, function () {
+                $("#preview-payment-proof-modal").fadeOut(150);
+            });
+    });
+
     // Toggle delivery method sections
     $('input[name="delivery_method"]').change(function () {
         if ($("#delivery_method_upload").is(":checked")) {
@@ -206,6 +222,65 @@ $(document).ready(function () {
                             icon: "error",
                             title: "Error!",
                             text: "An error occurred while confirming the payment.",
+                            customClass: {
+                                popup: "custom-swal-popup",
+                                title: "custom-swal-title",
+                                htmlContainer: "custom-swal-text",
+                                confirmButton: "custom-swal-success-button",
+                                cancelButton: "custom-swal-cancel-button",
+                            },
+                        });
+                        console.error(
+                            "Payment confirmation error:",
+                            xhr.responseJSON || error
+                        );
+                    },
+                });
+            }
+        });
+    });
+
+    $("#invalidate-payment-btn").click(function () {
+        // add a confirmation swal, if yes update the status to processing via ajax
+        const adoptionId = $(this).data("adoption-id");
+
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You are about to invalidate the payment. This will set the payment status to 'Invalid'.",
+            icon: "question",
+            showCancelButton: true,
+            customClass: {
+                popup: "custom-swal-popup",
+                title: "custom-swal-title",
+                htmlContainer: "custom-swal-text",
+                confirmButton: "custom-swal-success-button",
+                cancelButton: "custom-swal-cancel-button",
+            },
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `/artist/adoptions/invalidate_payment/${adoptionId}`,
+                    type: "POST",
+                    success: function (response) {
+                        Swal.fire({
+                            icon: "success",
+                            title: "Success!",
+                            text: "Payment invalidated. Reloading...",
+                            customClass: {
+                                popup: "custom-swal-popup",
+                                title: "custom-swal-title",
+                                htmlContainer: "custom-swal-text",
+                                confirmButton: "custom-swal-success-button",
+                                cancelButton: "custom-swal-cancel-button",
+                            },
+                        });
+                        setTimeout(() => location.reload(), 1000);
+                    },
+                    error: function (xhr, status, error) {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error!",
+                            text: "An error occurred while invalidating the payment.",
                             customClass: {
                                 popup: "custom-swal-popup",
                                 title: "custom-swal-title",
@@ -417,47 +492,3 @@ $(document).ready(function () {
         }
     });
 });
-
-function getOrderStatusColor(status) {
-    const statusColors = {
-        pending: "bg-red-600", // Red - waiting for artist confirmation
-        confirmed: "bg-blue-500", // blue - confirmed by artist
-        processing: "bg-amber-500", // Amber - preparing files
-        delivered: "bg-purple-400", // Purple - files delivered
-        completed: "bg-green-600", // Green - order completed
-        cancelled: "bg-gray-500", // gray - cancelled
-    };
-    return statusColors[status] || "bg-gray-500";
-}
-
-function getOrderStatusText(status) {
-    const statusTexts = {
-        pending: "Pending",
-        confirmed: "Confirmed",
-        processing: "Processing",
-        delivered: "Delivered",
-        completed: "Completed",
-        cancelled: "Cancelled",
-    };
-    return statusTexts[status] || "Unknown";
-}
-
-function getPaymentStatusColor(status) {
-    const paymentColors = {
-        unpaid: "bg-red-600", // Red - not paid
-        paid: "bg-green-600", // Green - paid
-        refunded: "bg-blue-600", // Cyan - refunded
-        failed: "bg-gray-600", // gray - failed
-    };
-    return paymentColors[status] || "bg-gray-400";
-}
-
-function getPaymentStatusText(status) {
-    const paymentTexts = {
-        unpaid: "Unpaid",
-        paid: "Paid",
-        refunded: "Refunded",
-        failed: "Failed",
-    };
-    return paymentTexts[status] || "Unknown";
-}

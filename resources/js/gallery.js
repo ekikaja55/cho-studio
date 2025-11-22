@@ -209,6 +209,36 @@ $(function () {
             }
             if (currentSelectedData.id)
                 $("#gallery_id").val(currentSelectedData.id);
+
+            // populate modal image, format, and status
+            if (currentSelectedData.image_url) {
+                $("#modalItemImage")
+                    .attr("src", currentSelectedData.image_url)
+                    .attr(
+                        "alt",
+                        currentSelectedData.title || "Artwork preview"
+                    );
+            }
+            $("#modalItemFormat").text(currentSelectedData.file_format || "-");
+            // status badge styling
+            (function setModalStatus(status) {
+                var $el = $("#modalItemStatus");
+                var s = status ? String(status).toLowerCase() : "unknown";
+                $el.text(s.toUpperCase());
+                $el.removeClass(
+                    "bg-red-200 bg-yellow-200 bg-green-200 bg-gray-200 text-red-800 text-yellow-800 text-green-800 text-gray-800"
+                );
+                if (s === "sold") {
+                    $el.addClass("bg-red-200 text-red-800");
+                } else if (s === "reserved") {
+                    $el.addClass("bg-yellow-200 text-yellow-800");
+                } else if (s === "available" || s === "not_sold") {
+                    $el.addClass("bg-green-200 text-green-800");
+                } else {
+                    $el.addClass("bg-gray-200 text-gray-800");
+                }
+            })(currentSelectedData.status);
+
             $("#purchaseModal").removeClass("hidden").show();
             $("#formView").removeClass("hidden");
             $("#thankYouView").addClass("hidden");
@@ -242,6 +272,33 @@ $(function () {
                         );
                     }
                     if (data.id) $("#gallery_id").val(data.id);
+                    // populate image, format, status from fetched data as well
+                    if (data.image_url) {
+                        $("#modalItemImage")
+                            .attr("src", data.image_url)
+                            .attr("alt", data.title || "Artwork preview");
+                    }
+                    $("#modalItemFormat").text(data.file_format || "-");
+                    (function setModalStatus(status) {
+                        var $el = $("#modalItemStatus");
+                        var s = status
+                            ? String(status).toLowerCase()
+                            : "unknown";
+                        $el.text(s.toUpperCase());
+                        $el.removeClass(
+                            "bg-red-200 bg-yellow-200 bg-green-200 bg-gray-200 text-red-800 text-yellow-800 text-green-800 text-gray-800"
+                        );
+                        if (s === "sold") {
+                            $el.addClass("bg-red-200 text-red-800");
+                        } else if (s === "reserved") {
+                            $el.addClass("bg-yellow-200 text-yellow-800");
+                        } else if (s === "available" || s === "not_sold") {
+                            $el.addClass("bg-green-200 text-green-800");
+                        } else {
+                            $el.addClass("bg-gray-200 text-gray-800");
+                        }
+                    })(data.status);
+
                     $("#purchaseModal").removeClass("hidden").show();
                 })
                 .fail(function () {
@@ -254,6 +311,81 @@ $(function () {
 
     $("#closeModalButton, #finishButton").on("click", function () {
         $("#purchaseModal").hide();
+    });
+
+    $("#paymentProof").on("change", function () {
+        var fileName = $(this).val().split("\\").pop();
+        if (fileName) {
+            $("#paymentProofName").text(fileName);
+        } else {
+            $("#paymentProofName").text("No file chosen");
+        }
+    });
+
+    $("#purchaseForm").on("submit", function (e) {
+        e.preventDefault();
+        var formData = new FormData(this);
+        $("#submitButton").prop("disabled", true);
+        $("#formErrors").html("");
+        $.ajax({
+            url: "/gallery/adopt",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            beforeSend: function () {
+                Swal.fire({
+                    title: "Sending...",
+                    text: "Please wait while your request is being sent.",
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    },
+                    customClass: {
+                        popup: "custom-swal-popup",
+                        title: "custom-swal-title",
+                        htmlContainer: "custom-swal-text",
+                    },
+                });
+            },
+            success: function (response) {
+                if (response.success) {
+                    // sweet alert or simple message
+                    Swal.fire({
+                        icon: "success",
+                        title: "Success!",
+                        text: response.message,
+                        customClass: {
+                            popup: "custom-swal-popup",
+                            title: "custom-swal-title",
+                            htmlContainer: "custom-swal-text",
+                        },
+                    });
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    $("#formErrors").html(
+                        '<p class="text-red-600">Submission failed. Please try again later.</p>'
+                    );
+                    $("#submitButton").prop("disabled", false);
+                }
+            },
+            error: function (xhr) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Error!",
+                    text: "An error occurred while marking the adoption as completed.",
+                    customClass: {
+                        popup: "custom-swal-popup",
+                        title: "custom-swal-title",
+                        htmlContainer: "custom-swal-text",
+                    },
+                });
+                console.error(
+                    "Mark complete error:",
+                    xhr.responseJSON || error
+                );
+            },
+        });
     });
 
     // --- Gallery rotation ---

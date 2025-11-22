@@ -162,10 +162,7 @@ $(document).ready(function () {
                 <tr class="bg-[var(--color-background)]">
                     <td class="p-3 md:p-4 text-lg max-lg:text-base max-sm:text-sm max-md:p-1 border border-stone-900 align-top">
                         <div class="font-semibold">${
-                            a.buyer_name || "N/A"
-                        }</div>
-                        <div class="text-sm text-gray-600">${
-                            a.buyer_email || "N/A"
+                            a.email || "N/A"
                         }</div>
                     </td>
                     <td class="p-3 md:p-4 text-lg max-lg:text-base max-sm:text-sm max-md:p-1 border border-stone-900 align-top">
@@ -240,17 +237,14 @@ $(document).ready(function () {
     }
 
     function updateStatusCounts(counts) {
-        $("#status-pending").text(`${counts.pending || 0} Pending`);
-        $("#status-confirmed").text(`${counts.confirmed || 0} confirmed`);
-        $("#status-processing").text(`${counts.processing || 0} Processing`);
+        $("#status-placed").text(`${counts.placed || 0} Placed`);
         $("#status-delivered").text(`${counts.delivered || 0} Delivered`);
     }
 
     function getOrderStatusColor(status) {
         const statusColors = {
-            pending: "bg-red-600", // Red - waiting for artist confirmation
-            confirmed: "bg-blue-500", // blue - confirmed by artist
-            processing: "bg-amber-500", // Amber - preparing files
+            placed: "bg-amber-500", // Amber - preparing files
+            processing: "bg-blue-500",
             delivered: "bg-purple-400", // Purple - files delivered
             completed: "bg-green-600", // Green - order completed
             cancelled: "bg-gray-500", // gray - cancelled
@@ -260,8 +254,7 @@ $(document).ready(function () {
 
     function getOrderStatusText(status) {
         const statusTexts = {
-            pending: "Pending",
-            confirmed: "Confirmed",
+            placed: "Placed",
             processing: "Processing",
             delivered: "Delivered",
             completed: "Completed",
@@ -272,20 +265,20 @@ $(document).ready(function () {
 
     function getPaymentStatusColor(status) {
         const paymentColors = {
-            unpaid: "bg-red-600", // Red - not paid
+            pending: "bg-red-600", // Red - not paid
             paid: "bg-green-600", // Green - paid
             refunded: "bg-blue-600", // Cyan - refunded
-            failed: "bg-gray-600", // gray - failed
+            invalid: "bg-gray-600"
         };
         return paymentColors[status] || "bg-gray-400";
     }
 
     function getPaymentStatusText(status) {
         const paymentTexts = {
-            unpaid: "Unpaid",
+            pending: "Pending",
             paid: "Paid",
             refunded: "Refunded",
-            failed: "Failed",
+            invalid: "Invalid"
         };
         return paymentTexts[status] || "Unknown";
     }

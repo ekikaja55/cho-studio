@@ -47,7 +47,7 @@ class AdoptionConfirmation extends Mailable
     {
         // Arahkan ke template email yang sudah Anda punya
         return new Content(
-            view: 'mails.new_adoption', // <-- MODIFIKASI INI
+            view: 'mail.new_adoption', // <-- MODIFIKASI INI
         );
     }
 

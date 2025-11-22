@@ -29,8 +29,10 @@ class GalleryPageController extends Controller
         // not_sold: items that are not for sale (not_sold status)
         $not_sold = $allGallery->where('status', 'not_sold')->values();
 
+        $allGalleryExceptNotSold = $allGallery->where('status', '!=', 'not_sold')->values();
+
         // Return only the requested collections: available, not_sold, and allGallery
-        return view('gallery.gallery', compact('available', 'not_sold', 'allGallery'));
+        return view('gallery.gallery', compact('available', 'not_sold', 'allGalleryExceptNotSold'));
     }
 
     /**
@@ -58,12 +60,36 @@ class GalleryPageController extends Controller
             if (!file_exists($uploadPath)) {
                 mkdir($uploadPath, 0755, true);
             }
-            $extension = $request->file('paymentProof')->getClientOriginalExtension();
-            $fileName = $adoption->id . '.' . $extension;
+
+            // Use the model primary key (may be 'adoption_id') rather than assuming 'id'
+            $pkName = $adoption->getKeyName();
+            $pkValue = $adoption->{$pkName} ?? null;
+
+            // Normalize extension to lowercase to avoid ".PNG" style names
+            $extension = strtolower($request->file('paymentProof')->getClientOriginalExtension() ?? '');
+
+            // Fallback to timestamp if primary key is missing for any reason
+            if (empty($pkValue)) {
+                $pkValue = time();
+            }
+
+            $fileName = $pkValue . ($extension ? '.' . $extension : '');
             $request->file('paymentProof')->move($uploadPath, $fileName);
             $adoption->payment_confirmation = 'adoption_payment/' . $fileName;
             $adoption->save();
         }
+
+        // update gallery status to 'reserved'
+        $galleryItem = Gallery::find($request->gallery_id);
+        if ($galleryItem) {
+            $galleryItem->status = 'reserved';
+            $galleryItem->save();
+        }
+
+        Mail::to($request->email)->send(new AdoptionConfirmation($adoption));
+        Mail::to(env('MAIL_USERNAME', config('mail.from.address', null)))->send(new AdminAdoptionNotification($adoption));
+
+        return response()->json(['success' => true, 'message' => 'Submission successful!']);
 
         // if ($validator->fails()) {
         //     // Extra debug for file mime/extension if present (safe to log)
@@ -144,11 +170,11 @@ class GalleryPageController extends Controller
         // return response()->json(['success' => true, 'message' => 'Submission successful!']);
     }
 
-    public function show($id)
-    {
-        $gallery = Gallery::findOrFail($id);
-        return view('gallery.index', compact('gallery'));
-    }
+    // public function show($id)
+    // {
+    //     $gallery = Gallery::findOrFail($id);
+    //     return view('gallery.index', compact('gallery'));
+    // }
 
     /**
      * Return a minimal, safe JSON payload for a gallery item.
@@ -178,24 +204,24 @@ class GalleryPageController extends Controller
         return response()->json($payload);
     }
 
-    public function processAdoption(Request $request, $id)
-    {
-        $gallery = Gallery::findOrFail($id);
-        Gallery::where('id', $request->$id)->update([
-            'status' => 'reserved'
-        ]);
+    // public function processAdoption(Request $request, $id)
+    // {
+    //     $gallery = Gallery::findOrFail($id);
+    //     Gallery::where('id', $request->$id)->update([
+    //         'status' => 'reserved'
+    //     ]);
 
-        $adoption = Adoption::create([
-            'gallery_id' => $gallery->id,
-            'adoption_id' => 'ADP' . time(),
-            'email' => $request->email,
-            'payment_status' => 'pending',
-            // Add other necessary fields
-        ]);
+    //     $adoption = Adoption::create([
+    //         'gallery_id' => $gallery->id,
+    //         'adoption_id' => 'ADP' . time(),
+    //         'email' => $request->email,
+    //         'payment_status' => 'pending',
+    //         // Add other necessary fields
+    //     ]);
 
-        // Send email
-        Mail::to($adoption->email)->send(new AdoptionDeliveryMail($adoption));
+    //     // Send email
+    //     Mail::to($adoption->email)->send(new AdoptionDeliveryMail($adoption));
 
-        return back()->with('success', 'Email sent successfully!');
-    }
+    //     return back()->with('success', 'Email sent successfully!');
+    // }
 }

@@ -16,8 +16,12 @@ return new class extends Migration
             $table->unsignedBigInteger("gallery_id"); // FK ke gallery.gallery_id tanpa constraint
             $table->string('email');
             $table->string('payment_confirmation')->nullable(); // path ke file bukti pembayaran
-            $table->enum('order_status', ['placed', 'delivered', 'canceled'])->default('placed');
-            $table->enum('payment_status', ['pending', 'paid'])->default('pending');
+            $table->enum('order_status', ['placed', "processing", 'delivered', 'cancelled', "completed"])->default('placed');
+            $table->enum('payment_status', ['pending', "invalid", 'paid', "refunded"])->default('pending');
+            $table->text('delivery_notes')->nullable(); // Artist notes for delivery (e.g., file formats, resolution)
+            $table->enum('delivery_type', ['upload_file', 'link'])->nullable();
+            $table->text('delivery_file')->nullable();
+            $table->timestamp('completed_at')->nullable(); 
             $table->timestamps();
             $table->softDeletes(); // deleted_at untuk soft delete
         });

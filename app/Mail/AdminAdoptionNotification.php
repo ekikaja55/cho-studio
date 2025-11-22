@@ -46,7 +46,7 @@ class AdminAdoptionNotification extends Mailable
         // Buat template email BARU khusus untuk Admin
         // Contoh: 'mails.admin_notification'
         return new Content(
-            view: 'mails.admin_notification', // <-- MODIFIKASI INI
+            view: 'mail.admin_notification', // <-- MODIFIKASI INI
         );
     }
 

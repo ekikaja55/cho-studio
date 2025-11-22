@@ -19,30 +19,6 @@
         </div>
         <!-- Timeline of dates -->
         <div class="space-y-2">
-            @if ($adoption->paid_at)
-                <div class="flex items-center gap-2 text-sm text-green-700 bg-white px-3 py-2 rounded-lg">
-                    <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
-                        </path>
-                    </svg>
-                    <span class="font-semibold">Paid on:</span>
-                    <span>{{ $adoption->paid_at->format('F j, Y \a\t g:i A') }}</span>
-                </div>
-            @endif
-
-            @if ($adoption->delivered_at)
-                <div class="flex items-center gap-2 text-sm text-green-700 bg-white px-3 py-2 rounded-lg">
-                    <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4">
-                        </path>
-                    </svg>
-                    <span class="font-semibold">Delivered on:</span>
-                    <span>{{ $adoption->delivered_at->format('F j, Y \a\t g:i A') }}</span>
-                </div>
-            @endif
-
             @if ($adoption->completed_at)
                 <div class="flex items-center gap-2 text-sm text-green-700 bg-white px-3 py-2 rounded-lg">
                     <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

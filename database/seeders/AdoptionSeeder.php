@@ -97,6 +97,9 @@ class AdoptionSeeder extends Seeder
                 'payment_confirmation' => $paymentConfirmation,
                 'order_status' => $orderStatus,
                 'payment_status' => $paymentStatus,
+                "delivery_notes" => "",
+                "delivery_type" => $orderStatus == "delivered" ? "link" : null,
+                'delivery_file' => $orderStatus == "delivered" ? "https://drive.google.com/file/d/1-XtTcKqzTsduUHaEjKZN6YBs8hPe_2G6/view?usp=sharing" : null,
                 'created_at' => $adoptionTime,
                 'updated_at' => now(),
             ];
