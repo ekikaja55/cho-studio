@@ -55,7 +55,7 @@
                     <div class="mb-4">
                         <label for="email" class="block text-sm font-bold text-gray-700 mb-1">Your Email</label>
                         <div class="relative">
-                            <input type="email" id="email" name="email" required
+                            <input type="email" id="email" name="email"
                                 class="w-full px-4 py-2 border-2 border-black rounded-lg mb-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
                                 placeholder="your.email@example.com" aria-describedby="emailHelp">
                         </div>
@@ -70,7 +70,7 @@
                             </label>
                             <span id="paymentProofName" class="text-sm text-gray-600 truncate max-w-[160px]">No file chosen</span>
                         </div>
-                        <input type="file" id="paymentProof" name="paymentProof" required
+                        <input type="file" id="paymentProof" name="paymentProof"
                             accept="image/png, image/jpeg, image/jpg" class="hidden">
                         <p class="text-xs text-gray-500 mt-1">Accepted: PNG, JPG. Please keep file under 5MB.</p>
                     </div>

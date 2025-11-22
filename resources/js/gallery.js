@@ -324,6 +324,55 @@ $(function () {
 
     $("#purchaseForm").on("submit", function (e) {
         e.preventDefault();
+
+        var email = $("#email").val();
+        var file = $("#paymentProof")[0].files[0];
+        
+        // validate
+        if(!email || email.trim() === "") {
+            Swal.fire({
+                icon: "warning",
+                title: "Email Required",
+                text: "Please enter your email address.",
+                customClass: {
+                    popup: "custom-swal-popup",
+                    title: "custom-swal-title",
+                    htmlContainer: "custom-swal-text",
+                },
+            });
+            return;
+        }
+
+        // validate email format
+        var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if(!emailRegex.test(email)) {
+            Swal.fire({
+                icon: "warning",
+                title: "Invalid Email",
+                text: "Please enter a valid email address.",
+                customClass: {
+                    popup: "custom-swal-popup",
+                    title: "custom-swal-title",
+                    htmlContainer: "custom-swal-text",
+                },
+            });
+            return;
+        }
+
+        if(!file) {
+            Swal.fire({
+                icon: "warning",
+                title: "Payment Proof Required",
+                text: "Please upload your payment proof.",
+                customClass: {
+                    popup: "custom-swal-popup",
+                    title: "custom-swal-title",
+                    htmlContainer: "custom-swal-text",
+                },
+            });
+            return;
+        }
+
         var formData = new FormData(this);
         $("#submitButton").prop("disabled", true);
         $("#formErrors").html("");
