@@ -7,7 +7,6 @@ use App\Models\Adoption;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\NewAdoptionNotification; // Pastikan Anda sudah membuat Mailable ini
 use Illuminate\Support\Facades\Log;
 use App\Mail\AdminAdoptionNotification;
 use App\Mail\AdoptionConfirmation;
@@ -21,30 +20,17 @@ class GalleryPageController extends Controller
      */
     public function index()
     {
-        // Ambil semua gallery yang statusnya 'available' sebagai "adopted" di konteks Anda
-        $adopted = Gallery::whereIn('status', ['reserved','sold'])
-            ->orderBy('updated_at', 'desc')
-            ->get();
+        // Fetch all gallery items ordered by newest first
+        $allGallery = Gallery::orderBy('created_at', 'desc')->get();
 
-        // Semua gallery yang berstatus 'archived' dianggap non-adopted
-        $nonAdopted = Gallery::where('status', ['available','not_sold'])
-            ->orderBy('created_at', 'desc')
-            ->get();
+        // available: items that are available for adoption/sale
+        $available = $allGallery->where('status', 'available')->values();
 
-        // Pilih satu adopted item (available) untuk tampil di kiri
-        $mainAdopted = $adopted->first();
+        // not_sold: items that are not for sale (not_sold status)
+        $not_sold = $allGallery->where('status', 'not_sold')->values();
 
-        // Untuk section "ready to buy" kita tampilkan adopted items (available ones)
-        $designs = $adopted;
-
-        // Daftar gallery_id yang sudah lunas (payment_status = 'paid') dan gallery masih 'available'
-        $paidIdsRaw = Adoption::where('payment_status', 'paid')->pluck('gallery_id')->toArray();
-        $paidIds = Gallery::whereIn('gallery_id', $paidIdsRaw)
-            ->where('status', ['available','not_sold'])
-            ->pluck('gallery_id')
-            ->toArray();
-
-        return view('gallery', compact('designs', 'mainAdopted', 'nonAdopted', 'paidIds'));
+        // Return only the requested collections: available, not_sold, and allGallery
+        return view('gallery.gallery', compact('available', 'not_sold', 'allGallery'));
     }
 
     /**
@@ -52,90 +38,110 @@ class GalleryPageController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $request->validate([
             'gallery_id' => 'required|exists:gallery,gallery_id',
             'email' => 'required|email|max:255',
             // allow png/jpg/jpeg + webp/svg; ensure it's a file and limit 5MB
             'paymentProof' => 'required|file|mimes:jpeg,png,jpg,webp,svg|max:5120', // max 5MB
         ]);
 
-        if ($validator->fails()) {
-            // Extra debug for file mime/extension if present (safe to log)
-            $fileDebug = null;
-            if ($request->hasFile('paymentProof')) {
-                try {
-                    $f = $request->file('paymentProof');
-                    $fileDebug = [
-                        'client_mime' => $f->getClientMimeType(),
-                        'client_ext' => $f->getClientOriginalExtension(),
-                        'size' => $f->getSize(),
-                    ];
-                } catch (\Exception $e) {
-                    $fileDebug = ['error' => $e->getMessage()];
-                }
-            }
+        // create new adoption record
+        $adoption = new Adoption();
+        $adoption->gallery_id = $request->gallery_id;
+        $adoption->email = $request->email;
+        $adoption->order_status = 'placed';
+        $adoption->payment_status = 'pending';
+        $adoption->save();
 
-            Log::warning('Adoption validation failed', [
-                'errors' => $validator->errors()->toArray(),
-                'request_keys' => array_keys($request->all()),
-                'has_file' => $request->hasFile('paymentProof'),
-                'file_debug' => $fileDebug,
-            ]);
-
-            // Return friendlier error messages (include detected mime for helpful debugging)
-            $errors = $validator->errors()->toArray();
-            if (isset($errors['paymentProof'])) {
-                $errors['paymentProof'][] = 'Allowed file types: jpeg, jpg, png, webp, svg. Max size 5MB.';
+        if ($request->has("paymentProof")) {
+            $uploadPath = public_path('adoption_payment');
+            if (!file_exists($uploadPath)) {
+                mkdir($uploadPath, 0755, true);
             }
-            return response()->json(['success' => false, 'errors' => $errors], 422);
+            $extension = $request->file('paymentProof')->getClientOriginalExtension();
+            $fileName = $adoption->id . '.' . $extension;
+            $request->file('paymentProof')->move($uploadPath, $fileName);
+            $adoption->payment_confirmation = 'adoption_payment/' . $fileName;
+            $adoption->save();
         }
 
-        $galleryItem = Gallery::find($request->gallery_id);
-        if (!$galleryItem || $galleryItem->status !== 'available') {
-            return response()->json(['success' => false, 'message' => 'Sorry, this artwork is no longer available.'], 404);
-        }
+        // if ($validator->fails()) {
+        //     // Extra debug for file mime/extension if present (safe to log)
+        //     $fileDebug = null;
+        //     if ($request->hasFile('paymentProof')) {
+        //         try {
+        //             $f = $request->file('paymentProof');
+        //             $fileDebug = [
+        //                 'client_mime' => $f->getClientMimeType(),
+        //                 'client_ext' => $f->getClientOriginalExtension(),
+        //                 'size' => $f->getSize(),
+        //             ];
+        //         } catch (\Exception $e) {
+        //             $fileDebug = ['error' => $e->getMessage()];
+        //         }
+        //     }
 
-        $filePath = null;
-        if ($request->hasFile('paymentProof')) {
-            $file = $request->file('paymentProof');
-            $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-            $filePath = $file->storeAs('payment_confirmations', $fileName, 'public');
-        }
+        //     Log::warning('Adoption validation failed', [
+        //         'errors' => $validator->errors()->toArray(),
+        //         'request_keys' => array_keys($request->all()),
+        //         'has_file' => $request->hasFile('paymentProof'),
+        //         'file_debug' => $fileDebug,
+        //     ]);
 
-        // Build adoption data
-        $adoptionData = [
-            'gallery_id' => $galleryItem->gallery_id,
-            'email' => $request->email,
-            'payment_confirmation' => $filePath, // simpan path bukti pembayaran
-            'order_status' => 'placed', // default saat baru kirim bukti
-            'payment_status' => 'pending', // tunggu verifikasi admin
-        ];
+        //     // Return friendlier error messages (include detected mime for helpful debugging)
+        //     $errors = $validator->errors()->toArray();
+        //     if (isset($errors['paymentProof'])) {
+        //         $errors['paymentProof'][] = 'Allowed file types: jpeg, jpg, png, webp, svg. Max size 5MB.';
+        //     }
+        //     return response()->json(['success' => false, 'errors' => $errors], 422);
+        // }
 
-        $adoption = Adoption::create($adoptionData);
+        // $galleryItem = Gallery::find($request->gallery_id);
+        // if (!$galleryItem || $galleryItem->status !== 'available') {
+        //     return response()->json(['success' => false, 'message' => 'Sorry, this artwork is no longer available.'], 404);
+        // }
 
-        // NOTE: do NOT mark gallery->status = 'sold' here.
-        // Keep gallery.status in DB controlled by admin or when adoption.payment_status == 'paid'.
+        // $filePath = null;
+        // if ($request->hasFile('paymentProof')) {
+        //     $file = $request->file('paymentProof');
+        //     $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+        //     $filePath = $file->storeAs('payment_confirmations', $fileName, 'public');
+        // }
 
-        // Prepare email recipients
-        $adminEmail = env('MAIL_USERNAME', config('mail.from.address', null));
-        $buyerEmail = $adoption->email;
+        // // Build adoption data
+        // $adoptionData = [
+        //     'gallery_id' => $galleryItem->gallery_id,
+        //     'email' => $request->email,
+        //     'payment_confirmation' => $filePath, // simpan path bukti pembayaran
+        //     'order_status' => 'placed', // default saat baru kirim bukti
+        //     'payment_status' => 'pending', // tunggu verifikasi admin
+        // ];
 
-        // Send emails: admin notification + buyer confirmation
-        try {
-            // Admin notification
-          Log::info('Queueing emails for adoption ID: ' . $adoption->adoption_id);
-            if ($adminEmail) {
-                Mail::to($adminEmail)->send(new AdminAdoptionNotification($adoption));
-            }
-            if ($buyerEmail) {
-                Mail::to($buyerEmail)->send(new AdoptionConfirmation($adoption));
-            }
-        } catch (\Exception $e) {
-            // don't fail the request — log the error
-            Log::error('Failed to queue email for adoption ID ' . $adoption->adoption_id . ': ' . $e->getMessage());
-        }
+        // $adoption = Adoption::create($adoptionData);
 
-        return response()->json(['success' => true, 'message' => 'Submission successful!']);
+        // // NOTE: do NOT mark gallery->status = 'sold' here.
+        // // Keep gallery.status in DB controlled by admin or when adoption.payment_status == 'paid'.
+
+        // // Prepare email recipients
+        // $adminEmail = env('MAIL_USERNAME', config('mail.from.address', null));
+        // $buyerEmail = $adoption->email;
+
+        // // Send emails: admin notification + buyer confirmation
+        // try {
+        //     // Admin notification
+        //   Log::info('Queueing emails for adoption ID: ' . $adoption->adoption_id);
+        //     if ($adminEmail) {
+        //         Mail::to($adminEmail)->send(new AdminAdoptionNotification($adoption));
+        //     }
+        //     if ($buyerEmail) {
+        //         Mail::to($buyerEmail)->send(new AdoptionConfirmation($adoption));
+        //     }
+        // } catch (\Exception $e) {
+        //     // don't fail the request — log the error
+        //     Log::error('Failed to queue email for adoption ID ' . $adoption->adoption_id . ': ' . $e->getMessage());
+        // }
+
+        // return response()->json(['success' => true, 'message' => 'Submission successful!']);
     }
 
     public function show($id)
@@ -144,13 +150,41 @@ class GalleryPageController extends Controller
         return view('gallery.index', compact('gallery'));
     }
 
+    /**
+     * Return a minimal, safe JSON payload for a gallery item.
+     * This endpoint is intended to be called from client-side code
+     * and only returns non-sensitive public fields.
+     */
+    public function json($id)
+    {
+        $gallery = Gallery::where('gallery_id', $id)->first();
+        if (!$gallery) {
+            return response()->json(['message' => 'Not found'], 404);
+        }
+
+        // Determine if this gallery has a paid adoption
+        $isPaid = Adoption::where('gallery_id', $gallery->gallery_id)->where('payment_status', 'paid')->exists();
+
+        $payload = [
+            'id' => $gallery->gallery_id,
+            'title' => $gallery->title,
+            'price' => $gallery->price,
+            'image_url' => asset($gallery->image_url),
+            'file_format' => $gallery->file_format,
+            'status' => $gallery->status,
+            'is_paid' => $isPaid,
+        ];
+
+        return response()->json($payload);
+    }
+
     public function processAdoption(Request $request, $id)
     {
         $gallery = Gallery::findOrFail($id);
         Gallery::where('id', $request->$id)->update([
             'status' => 'reserved'
         ]);
-        
+
         $adoption = Adoption::create([
             'gallery_id' => $gallery->id,
             'adoption_id' => 'ADP' . time(),
