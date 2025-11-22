@@ -35,7 +35,7 @@ class ArtistGalleryController extends Controller
 
         return view('artist.gallery', compact('galleryData'));
     }
-    
+
     public function destroy($id): JsonResponse
     {
         $gallery = Gallery::findOrFail($id);
@@ -74,7 +74,7 @@ class ArtistGalleryController extends Controller
             }
 
             // Simpan gambar baru
-            $filename = time() . '.' . $request->file('image')->getClientOriginalExtension();
+            $filename = $id . '.' . $request->file('image')->getClientOriginalExtension();
             $request->file('image')->move(public_path('gallery_image'), $filename);
 
             $gallery->image_url = 'gallery_image/' . $filename;
@@ -137,7 +137,7 @@ class ArtistGalleryController extends Controller
             'success' => true,
             'gallery' => [
                 'gallery_id' => $gallery->gallery_id,
-                'image_url' =>asset($gallery->image_url),
+                'image_url' => asset($gallery->image_url),
                 'title' => $gallery->title,
                 'description' => $gallery->description,
                 'price' => $gallery->price,
