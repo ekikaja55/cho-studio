@@ -49,10 +49,13 @@ class HistoryMemberController extends Controller
 
         // 3. Query Adoptions (if 'all' or 'adoption' is selected)
         if ($type === 'all' || strtolower($type) === 'adoption') {
-            $adoptions = Adoption::where('buyer_email', $user->email)
-                // Apply search filter if present
+            $adoptions = Adoption::with('gallery')
+                ->where('email', $user->email)
+                // Apply search filter if present (search in gallery title)
                 ->when($search, function ($query, $term) {
-                    return $query->where('title', 'like', '%' . $term . '%');
+                    return $query->whereHas('gallery', function ($q) use ($term) {
+                        $q->where('title', 'like', '%' . $term . '%');
+                    });
                 })
                 // Apply adoption status filter if not 'all'
                 ->when(strtolower($adoptionStatus) !== 'all', function ($query) use ($adoptionStatus) {
