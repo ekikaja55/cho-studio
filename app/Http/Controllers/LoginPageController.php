@@ -66,7 +66,7 @@ class LoginPageController extends Controller
     public function showRegister()
     {
         if (!request()->has('accepted')) {
-            return redirect()->route('terms');
+            return redirect()->route('termsnconditions');
         }
 
         return view('register');
