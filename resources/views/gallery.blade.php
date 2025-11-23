@@ -2,8 +2,7 @@
 
 @section('content')
     {{-- Latar belakang utama --}}
-    <div
-        class="min-h-screen p-2 sm:p-4 mt-4 sm:mt-8 flex justify-center items-start font-[HammersmithOne-Regular]">
+    <div class="min-h-screen p-2 sm:p-4 mt-4 sm:mt-8 flex justify-center items-start font-[HammersmithOne-Regular]">
         <div class="container w-full sm:w-[95%] lg:w-[80%]">
             {{-- Header & Navigasi --}}
             <div class="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4 sm:gap-0">
@@ -203,7 +202,8 @@
                                 @php
                                     $imageUrl = asset($design->image_url);
                                     // treat as sold if gallery.status === 'sold' or adoption has paid
-                                    $isPaidOrSold = ($design->status === 'sold') || in_array($design->gallery_id, $paidIds);
+                                    $isPaidOrSold =
+                                        $design->status === 'sold' || in_array($design->gallery_id, $paidIds);
                                     $isReserved = $design->status === 'reserved';
                                 @endphp
                                 <div class="design-item cursor-pointer rounded-2xl border-4 border-black shadow-[0.5vh_0.5vh_0_black] aspect-square relative overflow-visible group hover:scale-[1.02] transition-all duration-300 z-0"

@@ -89,8 +89,6 @@ class ArtistAdoptionDetailController extends Controller
             'delivery_type' => 'required|string|in:upload_file,link',
         ]);
 
-        // dd($request->all());
-
         $adoption = Adoption::findOrFail($adoptionId);
 
         if ($request->delivery_type == 'upload_file' && $request->hasFile('delivery_file')) {
@@ -104,11 +102,8 @@ class ArtistAdoptionDetailController extends Controller
             $imagePath = 'adoptions/' . $adoptionId . '/' . $filename;
 
             $adoption->delivery_file = $imagePath;
-
-            // $fileOrLink = asset($imagePath);
         } else if ($request->delivery_type == 'link' && $request->has('delivery_link')) {
             $adoption->delivery_file = $request->delivery_link;
-            // $fileOrLink = $request->delivery_link;
         } else {
             return response()->json(['error' => 'No file or link provided'], 422);
         }
@@ -121,7 +116,6 @@ class ArtistAdoptionDetailController extends Controller
         $galleryItem->status = "sold";
         $galleryItem->save();
 
-        // get adoptions info again for mail
         $adoptionInfo = Adoption::with('gallery')->findOrFail($adoptionId);
 
         Mail::to($adoption->email)->send(new AdoptionDeliveryMail($adoptionInfo));

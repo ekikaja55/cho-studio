@@ -177,7 +177,6 @@ class HistoryMemberController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Review submitted successfully.',
-
         ]);
     }
 }
