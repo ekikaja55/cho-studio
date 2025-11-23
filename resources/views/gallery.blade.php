@@ -18,11 +18,11 @@
                         <button onclick="window.location.href='/'">Home</button>
                     </div>
                     <div
-                        class="font-[HammersmithOne-Regular] bg-[#a2e1db] h-full py-3 sm:py-4 px-4 sm:px-8 max-sm:border-2 max-sm:rounded-xl rounded-t-2xl border-t-4 border-l-4 border-black hover:bg-[#b4a6d5] transition-colors duration-300 ease-in-out text-sm sm:text-lg whitespace-nowrap">
+                        class="font-[HammersmithOne-Regular] bg-pastel-turqoise h-full py-3 sm:py-4 px-4 sm:px-8 max-sm:border-2 max-sm:rounded-xl rounded-t-2xl border-t-4 border-l-4 border-black hover:bg-[#b4a6d5] transition-colors duration-300 ease-in-out text-sm sm:text-lg whitespace-nowrap">
                         <button onclick="window.location.href='/gallery'">Gallery</button>
                     </div>
                     <div
-                        class="font-[HammersmithOne-Regular] bg-[#a2e1db] h-full py-3 sm:py-4 px-4 sm:px-8 max-sm:border-2 max-sm:rounded-xl rounded-t-2xl border-t-4 border-l-4 border-black hover:bg-[#b4a6d5] transition-colors duration-300 ease-in-out text-sm sm:text-lg whitespace-nowrap">
+                        class="font-[HammersmithOne-Regular] bg-pastel-turqoise h-full py-3 sm:py-4 px-4 sm:px-8 max-sm:border-2 max-sm:rounded-xl rounded-t-2xl border-t-4 border-l-4 border-black hover:bg-[#b4a6d5] transition-colors duration-300 ease-in-out text-sm sm:text-lg whitespace-nowrap">
                         <button>Shop</button>
                     </div>
                     {{-- Tombol Member --}}
@@ -55,7 +55,7 @@
                     <div id="galleryShowcaseCustom"
                         class="flex w-full h-full gap-3 sm:gap-4 justify-center items-center pb-4">
                         {{-- Left: single adopted item --}}
-                        <div class="flex-shrink-0 w-[45%] sm:w-[48%] h-full flex items-center justify-center">
+                        <div class="shrink-0 w-[45%] sm:w-[48%] h-full flex items-center justify-center">
                             @if (!empty($mainAdopted))
                                 @php
                                     $img = asset($mainAdopted->image_url);
@@ -75,13 +75,13 @@
                                             SOLD OUT</div>
                                     @endif
                                     <div
-                                        class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                        class="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/80 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                         <p class="text-white font-bold text-sm truncate">Featured Artwork</p>
                                     </div>
                                 </div>
                             @else
                                 <div
-                                    class="rounded-3xl border-4 border-black shadow-[0.6vh_0.6vh_0_black] w-full h-full overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-gray-400 flex-col gap-2">
+                                    class="rounded-3xl border-4 border-black shadow-[0.6vh_0.6vh_0_black] w-full h-full overflow-hidden bg-linear-to-br from-gray-100 to-gray-200 flex items-center justify-center text-gray-400 flex-col gap-2">
                                     <p class="text-sm font-medium">No featured artwork yet</p>
                                 </div>
                             @endif
@@ -152,16 +152,16 @@
                     </h2>
                     {{-- Tombol Info (Manual Trigger) --}}
                     <button id="manualInfoBtn" 
-                            class="w-8 h-8 rounded-full border-2 border-black bg-[#a2e1db] text-black font-bold flex items-center justify-center hover:bg-[#b4a6d5] hover:scale-110 transition-all shadow-[2px_2px_0_black]"
+                            class="w-8 h-8 rounded-full border-2 border-black bg-pastel-turqoise text-black font-bold flex items-center justify-center hover:bg-[#b4a6d5] hover:scale-110 transition-all shadow-[2px_2px_0_black]"
                             title="Read Buying Guide">
                         i
                     </button>
                 </div>
-                
+
                 <div class="flex flex-col lg:flex-row gap-6 lg:gap-8 flex-1 min-h-0">
                     {{-- LEFT: PREVIEW PANEL --}}
                     <div id="previewPanel"
-                        class="flex-none bg-gradient-to-br from-[#f0ebe3] to-[#e6dfd5] border-4 border-black rounded-3xl shadow-[0.8vh_0.8vh_0_black] p-6 sm:p-8 flex flex-col items-center justify-center w-full lg:w-[380px] lg:h-fit transition-all duration-300">
+                        class="flex-none bg-linear-to-br from-[#f0ebe3] to-[#e6dfd5] border-4 border-black rounded-3xl shadow-[0.8vh_0.8vh_0_black] p-6 sm:p-8 flex flex-col items-center justify-center w-full lg:w-[380px] lg:h-fit transition-all duration-300">
                         <div class="w-full text-center mb-4">
                             <h3 class="font-[HammersmithOne-Regular] text-2xl mb-2 text-gray-800">Preview</h3>
                             <p id="previewTitle" class="text-sm text-gray-600 italic mb-2 line-clamp-2">Select a Design</p>
@@ -171,7 +171,7 @@
                             <img id="previewImage" src="" alt="Preview"
                                 class="w-full h-full object-cover hidden transition-opacity duration-300">
                             <div id="previewPlaceholder"
-                                class="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-[#dceef4] to-[#c6e3f0] text-center p-4">
+                                class="absolute inset-0 flex flex-col items-center justify-center bg-linear-to-br from-[#dceef4] to-[#c6e3f0] text-center p-4">
                                 <svg class="w-16 h-16 text-gray-400 mb-3" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -185,10 +185,10 @@
                                 <div class="flex items-center justify-between mb-3">
                                     <span class="text-xs font-bold text-gray-700">FILE FORMAT:</span>
                                     <span id="previewFormat"
-                                        class="px-3 py-1 bg-[#a2e1db] border-2 border-black rounded-full text-xs font-bold shadow-[0.2vh_0.2vh_0_black]">-</span>
+                                        class="px-3 py-1 bg-pastel-turqoise border-2 border-black rounded-full text-xs font-bold shadow-[0.2vh_0.2vh_0_black]">-</span>
                                 </div>
                                 <div
-                                    class="flex items-center justify-between bg-gradient-to-r from-[#e3f2fd] to-[#f3e5f5] border-2 border-black rounded-lg p-3">
+                                    class="flex items-center justify-between bg-linear-to-r from-[#e3f2fd] to-[#f3e5f5] border-2 border-black rounded-lg p-3">
                                     <span class="text-sm font-bold text-gray-800">Price:</span>
                                     <span id="previewPrice" class="text-xl font-bold text-[#2563eb]">-</span>
                                 </div>
@@ -233,7 +233,7 @@
                                         </div>
                                     @else
                                         <div
-                                            class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                            class="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/80 to-transparent p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                             <p class="text-white text-xs font-bold truncate">{{ $design->title }}</p>
                                         </div>
                                     @endif
@@ -250,10 +250,10 @@
             {{-- ======================================================================= --}}
             {{-- NEW: WELCOME POP UP DIALOG (HIDDEN BY DEFAULT) --}}
             {{-- ======================================================================= --}}
-            <div id="welcomePopup" class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/60 p-4 font-[HammersmithOne-Regular]">
+            <div id="welcomePopup" class="fixed inset-0 z-60 hidden items-center justify-center bg-black/60 p-4 font-[HammersmithOne-Regular]">
                 <div class="bg-[#f0ebe3] w-full max-w-lg rounded-3xl border-4 border-black shadow-[1vh_1vh_0_#b4a6d5] overflow-hidden transform scale-95 opacity-0 transition-all duration-500" id="welcomePopupCard">
                     {{-- Header PopUp --}}
-                    <div class="bg-[#a2e1db] border-b-4 border-black p-5 flex items-center gap-4">
+                    <div class="bg-pastel-turqoise border-b-4 border-black p-5 flex items-center gap-4">
                         <div class="w-12 h-12 bg-white rounded-full border-2 border-black flex items-center justify-center shadow-sm">
                             <span class="text-2xl">👋</span>
                         </div>
@@ -272,15 +272,15 @@
                         
                         <ul class="space-y-3 mt-2">
                             <li class="flex items-start gap-3">
-                                <div class="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">1</div>
+                                <div class="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">1</div>
                                 <p class="text-sm"><span class="font-bold">Pick a design</span> on the right panel.</p>
                             </li>
                             <li class="flex items-start gap-3">
-                                <div class="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">2</div>
+                                <div class="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">2</div>
                                 <p class="text-sm">Wait for the <span class="font-bold">Preview</span> to appear. (Sold items 🔴 cannot be bought).</p>
                             </li>
                             <li class="flex items-start gap-3">
-                                <div class="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">3</div>
+                                <div class="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">3</div>
                                 <p class="text-sm">Click <span class="bg-[#4c9eff] text-white px-2 py-0.5 rounded text-xs border border-black">Buy Now</span>, scan the QR code, and upload your proof.</p>
                             </li>
                         </ul>
@@ -343,7 +343,7 @@
                                         Proof</label>
                                     <input type="file" id="paymentProof" name="paymentProof" required
                                         accept="image/png, image/jpeg, image/jpg"
-                                        class="w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#a2e1db] file:text-gray-800 hover:file:bg-[#7dc8c1] border-2 border-black rounded-lg cursor-pointer">
+                                        class="w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-pastel-turqoise file:text-gray-800 hover:file:bg-turquoise border-2 border-black rounded-lg cursor-pointer">
                                 </div>
                                 <div class="mt-8 flex items-center gap-4">
                                     <button type="submit" id="submitButton"
@@ -362,7 +362,7 @@
 
                     <!-- THANK YOU VIEW -->
                     <div id="thankYouView" class="hidden p-8 md:p-12 text-center">
-                        <div class="bg-gradient-to-r from-[#a2e1db] to-[#7dc8c1] p-6 rounded-t-xl mb-6">
+                        <div class="bg-linear-to-r from-pastel-turqoise to-turquoise p-6 rounded-t-xl mb-6">
                             <h2 class="text-3xl font-bold text-gray-800">Thank You!</h2>
                         </div>
                         <p class="text-lg text-gray-800 mb-4">
