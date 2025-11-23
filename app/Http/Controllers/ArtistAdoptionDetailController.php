@@ -29,12 +29,6 @@ class ArtistAdoptionDetailController extends Controller
         $adoption->order_status = $request->status;
         $adoption->save();
 
-        // if($request->status == "confirmed") {
-        //     // send mail to buyer about payment procedure
-        //     $adoptionInfo = Adoption::with('gallery')->findOrFail($adoptionId);
-        //     Mail::to($adoption->buyer_email)->send(new AdoptionPaymentProcedureMail($adoptionInfo));
-        // }
-
         return response()->json([
             'success' => true,
             'message' => 'Adoption status updated successfully.'
