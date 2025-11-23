@@ -16,6 +16,14 @@ class GallerySeeder extends Seeder
         // Ambil semua file dalam folder (boleh kosong)
         $images = File::exists($imageFolder) ? File::files($imageFolder) : [];
 
+        // Urutkan file secara natural (numeric) berdasarkan nama file sehingga
+        // urutan menjadi 1,2,3,4,... bukan 1,11,12 (alfabet).
+        if (is_array($images) && count($images) > 1) {
+            usort($images, function ($a, $b) {
+                return strnatcmp($a->getFilename(), $b->getFilename());
+            });
+        }
+
         // Hindari ID duplicate jika seeder dijalankan beberapa kali
         $startId = (int) DB::table('gallery')->max('gallery_id');
 

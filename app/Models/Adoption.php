@@ -22,6 +22,14 @@ class Adoption extends Model
         'payment_confirmation',
         'order_status',
         'payment_status',
+        'delivery_notes',
+        'delivery_type',
+        'delivery_file',
+        'completed_at'
+    ];
+
+    protected $casts = [
+        'completed_at' => 'datetime',
     ];
 
     // Relasi ke Gallery
@@ -30,21 +38,11 @@ class Adoption extends Model
         return $this->belongsTo(Gallery::class, 'gallery_id', 'gallery_id');
     }
 
-    /**
-     * Get order status color
-     * pending    → 🔴 Red (waiting for artist confirmation)
-     * confirmed  → 🔵 Blue (confirmed by artist)
-     * processing → 🟣 Purple (preparing files)
-     * delivered  → 🟠 Amber (files delivered)
-     * completed  → 🟢 Green (order completed)
-     * cancelled  → ⚫ Gray (cancelled)
-     */
     public function getOrderStatusColorAttribute()
     {
         $colors = [
-            'pending' => 'bg-red-600',      // Red - waiting for artist confirmation
-            'confirmed' => 'bg-blue-500',   // Blue - confirmed by artist
-            'processing' => 'bg-amber-500', // Amber - preparing files
+            'placed' => 'bg-amber-500', // Amber - preparing files
+            "processing" => "bg-blue-500", // purple - processing
             'delivered' => 'bg-purple-400',   // Purple - files delivered
             'completed' => 'bg-green-600',   // Green - order completed
             'cancelled' => 'bg-gray-500',    // Gray - cancelled
@@ -59,9 +57,8 @@ class Adoption extends Model
     public function getOrderStatusTextAttribute()
     {
         $texts = [
-            'pending' => 'Pending',
-            'confirmed' => 'Confirmed',
-            'processing' => 'Processing',
+            'placed' => 'Placed',
+            "processing" => "Processing",
             'delivered' => 'Delivered',
             'completed' => 'Completed',
             'cancelled' => 'Cancelled',
@@ -70,20 +67,13 @@ class Adoption extends Model
         return $texts[$this->order_status] ?? 'Unknown';
     }
 
-    /**
-     * Get payment status color
-     * unpaid   → 🔴 Red (not paid)
-     * paid     → 🟢 Green (paid)
-     * refunded → 🔵 Blue (refunded)
-     * failed   → ⚫ Gray (failed)
-     */
     public function getPaymentStatusColorAttribute()
     {
         $colors = [
-            'unpaid' => 'bg-red-600',   // Red - not paid
+            'pending' => 'bg-red-600',   // Red - not paid
             'paid' => 'bg-green-600',   // Green - paid
             'refunded' => 'bg-blue-600', // Blue - refunded
-            'failed' => 'bg-gray-600',   // Gray - failed
+            "invalid" => "bg-gray-600"
         ];
 
         return $colors[$this->payment_status] ?? 'bg-gray-400';
@@ -95,10 +85,10 @@ class Adoption extends Model
     public function getPaymentStatusTextAttribute()
     {
         $texts = [
-            'unpaid' => 'Unpaid',
+            'pending' => 'Pending',
             'paid' => 'Paid',
             'refunded' => 'Refunded',
-            'failed' => 'Failed',
+            "invalid" => "Invalid"
         ];
 
         return $texts[$this->payment_status] ?? 'Unknown';

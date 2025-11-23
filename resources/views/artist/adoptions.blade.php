@@ -7,15 +7,9 @@
                 style="background-color: var(--color-pastel-gray-turquoise);">
                 <div class="text-2xl sm:text-4xl">Adoptions</div>
                 <div class="flex flex-wrap gap-2 sm:gap-4 items-center">
-                    <div id="status-pending"
-                        class="text-lg max-lg:text-base max-sm:text-sm rounded-full px-3 sm:px-4 py-1 sm:py-2 border-2 border bg-red-500">
-                        0 Pending</div>
-                        <div id="status-confirmed"
-                        class="text-lg max-lg:text-base max-sm:text-sm rounded-full px-3 sm:px-4 py-1 sm:py-2 border-2 border bg-blue-500">
-                        0 Confirmed</div>
-                    <div id="status-processing"
+                    <div id="status-placed"
                         class="text-lg max-lg:text-base max-sm:text-sm rounded-full px-3 sm:px-4 py-1 sm:py-2 border-2 border bg-amber-500">
-                        0 Processing</div>
+                        0 Placed</div>
                     <div id="status-delivered"
                         class="text-lg max-lg:text-base max-sm:text-sm rounded-full px-3 sm:px-4 py-1 sm:py-2 border-2 border bg-purple-400">
                         0 Delivered</div>
@@ -38,9 +32,7 @@
                             <select id="status-filter"
                                 class="w-full px-3 py-3 border-2 border-stone-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-600 bg-white">
                                 <option value="">All Order Status</option>
-                                <option value="pending">Pending</option>
-                                <option value="confirmed">Confirmed</option>
-                                <option value="processing">Processing</option>
+                                <option value="placed">Placed</option>
                                 <option value="delivered">Delivered</option>
                                 <option value="completed">Completed</option>
                                 <option value="cancelled">Cancelled</option>
@@ -52,10 +44,9 @@
                             <select id="payment-filter"
                                 class="w-full px-3 py-3 border-2 border-stone-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-600 bg-white">
                                 <option value="">All Payment Status</option>
-                                <option value="unpaid">Unpaid</option>
+                                <option value="pending">Pending</option>
                                 <option value="paid">Paid</option>
                                 <option value="refunded">Refunded</option>
-                                <option value="failed">Failed</option>
                             </select>
                         </div>
 

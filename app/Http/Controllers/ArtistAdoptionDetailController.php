@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\AdoptionDeliveryMail;
 use App\Mail\AdoptionPaymentProcedureMail;
 use App\Models\Adoption;
+use App\Models\Gallery;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
@@ -21,18 +22,12 @@ class ArtistAdoptionDetailController extends Controller
     {
         // update order status
         $request->validate([
-            'status' => 'required|string|in:confirmed,cancelled,processing,delivered,completed'
+            'status' => 'required|string|in:processing,delivered,completed,cancelled'
         ]);
 
         $adoption = Adoption::findOrFail($adoptionId);
         $adoption->order_status = $request->status;
         $adoption->save();
-
-        if($request->status == "confirmed") {
-            // send mail to buyer about payment procedure
-            $adoptionInfo = Adoption::with('gallery')->findOrFail($adoptionId);
-            Mail::to($adoption->buyer_email)->send(new AdoptionPaymentProcedureMail($adoptionInfo));
-        }
 
         return response()->json([
             'success' => true,
@@ -44,7 +39,6 @@ class ArtistAdoptionDetailController extends Controller
     {
         $adoption = Adoption::findOrFail($adoptionId);
         $adoption->payment_status = 'paid';
-        $adoption->paid_at = now();
         $adoption->order_status = 'processing'; // immidiately move to processing after payment confirmed
         $adoption->save();
 
@@ -54,14 +48,32 @@ class ArtistAdoptionDetailController extends Controller
         ]);
     }
 
+    function invalidate_payment($adoptionId)
+    {
+        $adoption = Adoption::findOrFail($adoptionId);
+        $adoption->order_status = "cancelled";
+        $adoption->payment_status = 'invalid';
+        $adoption->save();
+
+        // set gallery to available again
+        $galleryItem = Gallery::findOrFail($adoption->gallery_id);
+        $galleryItem->status = "available";
+        $galleryItem->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Adoption payment status set to invalid.'
+        ]);
+    }
+
     function save_notes(Request $request, $adoptionId)
     {
         $request->validate([
-            'delivery_notes' => 'nullable|string|max:2000'
+            'notes' => 'nullable|string|max:2000'
         ]);
 
         $adoption = Adoption::findOrFail($adoptionId);
-        $adoption->delivery_notes = $request->delivery_notes;
+        $adoption->delivery_notes = $request->notes;
         $adoption->save();
 
         return response()->json([
@@ -102,15 +114,17 @@ class ArtistAdoptionDetailController extends Controller
         }
 
         $adoption->delivery_type = $request->delivery_type;
-        $adoption->files_uploaded_at = now();
         $adoption->order_status = 'delivered';
-        $adoption->delivered_at = now();
         $adoption->save();
+
+        $galleryItem = Gallery::findOrFail($adoption->gallery_id);
+        $galleryItem->status = "sold";
+        $galleryItem->save();
 
         // get adoptions info again for mail
         $adoptionInfo = Adoption::with('gallery')->findOrFail($adoptionId);
 
-        Mail::to($adoption->buyer_email)->send(new AdoptionDeliveryMail($adoptionInfo));
+        Mail::to($adoption->email)->send(new AdoptionDeliveryMail($adoptionInfo));
 
         return response()->json(['success' => true, 'message' => 'Files delivered and email sent.']);
     }

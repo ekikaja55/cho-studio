@@ -20,8 +20,7 @@ class ArtistAdoptionController extends Controller
         if ($request->has('search') && !empty($request->search)) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
-                $q->where('buyer_name', 'like', "%{$search}%")
-                    ->orWhere('buyer_email', 'like', "%{$search}%")
+                $q->where('email', 'like', "%{$search}%")
                     ->orWhereHas('gallery', function ($galleryQuery) use ($search) {
                         $galleryQuery->where('title', 'like', "%{$search}%")
                             ->orWhere('description', 'like', "%{$search}%");
@@ -50,11 +49,10 @@ class ArtistAdoptionController extends Controller
 
         // Get status counts
         $statusCounts = [
-            'pending' => Adoption::where('order_status', 'pending')->count(),
-            'confirmed' => Adoption::where('order_status', 'confirmed')->count(),
-            'processing' => Adoption::where('order_status', 'processing')->count(),
+            'placed' => Adoption::where('order_status', 'placed')->count(),
             'delivered' => Adoption::where('order_status', 'delivered')->count(),
             'completed' => Adoption::where('order_status', 'completed')->count(),
+            'cancelled' => Adoption::where('order_status', 'cancelled')->count(),
         ];
 
         return response()->json([

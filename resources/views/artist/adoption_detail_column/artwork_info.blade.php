@@ -2,10 +2,42 @@
 <div class="space-y-6">
     <div class="overflow-hidden">
         <h2 class="text-2xl font-bold flex items-center gap-2 pb-4">
-            Artwork Preview
+            Adoption Information
         </h2>
 
         <div class="space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div
+                    class="bg-gradient-to-br from-gray-50 to-gray-100 p-5 rounded-xl border-2 border-gray-200 shadow-md">
+                    <div class="flex items-center gap-2 mb-3">
+                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                            </path>
+                        </svg>
+                        <label class="text-xs font-bold text-gray-700 uppercase tracking-wide">Buyer Email</label>
+                    </div>
+                    <div class="text-sm text-gray-800 leading-relaxed">
+                        {{ $adoption->email }}
+                    </div>
+                </div>
+                <div
+                    class="bg-gradient-to-br from-gray-50 to-gray-100 p-5 rounded-xl border-2 border-gray-200 shadow-md">
+
+                    <div class="flex items-center gap-2 mb-3">
+                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                            </path>
+                        </svg>
+                        <label class="text-xs font-bold text-gray-700 uppercase tracking-wide">Ordered At</label>
+                    </div>
+                    <div class="text-sm text-gray-800 leading-relaxed">
+                        {{ $adoption->created_at->format('F j, Y \a\t g:i A') }}
+                    </div>
+                </div>
+            </div>
+
             <!-- Artwork Image -->
             <div
                 class="bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl p-3 sm:p-5 border-2 border-stone-300 shadow-inner relative">
@@ -51,7 +83,7 @@
                     class="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-xl border-2 border-green-200 shadow-sm">
                     <label class="block text-xs font-bold text-green-700 mb-1 uppercase tracking-wide">Price</label>
                     <div class="text-sm sm:text-base font-bold text-green-700">Rp
-                        {{ number_format($adoption->price, 0, ',', '.') }}</div>
+                        {{ number_format($adoption->gallery->price, 0, ',', '.') }}</div>
                 </div>
             </div>
             <!-- Artwork Description -->
@@ -67,6 +99,7 @@
                     {{ $adoption->gallery->description }}
                 </div>
             </div>
+
         </div>
     </div>
 </div>

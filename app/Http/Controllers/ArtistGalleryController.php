@@ -35,7 +35,7 @@ class ArtistGalleryController extends Controller
 
         return view('artist.gallery', compact('galleryData'));
     }
-    
+
     public function destroy($id): JsonResponse
     {
         $gallery = Gallery::findOrFail($id);
@@ -62,6 +62,7 @@ class ArtistGalleryController extends Controller
             'description' => 'nullable|string',
             'file_format' => 'required|string|max:10',
             'price' => 'nullable|numeric',
+            'status' => 'nullable|string|in:available,not_sold',
             'image' => 'nullable|image|mimes:png,jpg,jpeg|max:5120',
         ]);
 
@@ -74,7 +75,7 @@ class ArtistGalleryController extends Controller
             }
 
             // Simpan gambar baru
-            $filename = time() . '.' . $request->file('image')->getClientOriginalExtension();
+            $filename = $id . '.' . $request->file('image')->getClientOriginalExtension();
             $request->file('image')->move(public_path('gallery_image'), $filename);
 
             $gallery->image_url = 'gallery_image/' . $filename;
@@ -86,7 +87,7 @@ class ArtistGalleryController extends Controller
             'description' => $validated['description'] ?? null,
             'file_format' => $validated['file_format'],
             'price' => $validated['price'] ?? null,
-            'status' => $validated['price'] ? 'available' : 'draft',
+            'status' => $validated['status'] ?? ($validated['price'] ? 'available' : 'not_sold'),
         ]);
 
         return response()->json([
@@ -98,6 +99,7 @@ class ArtistGalleryController extends Controller
                 'title' => $gallery->title,
                 'description' => $gallery->description,
                 'price' => $gallery->price,
+                'status' => $gallery->status,
                 'file_format' => $gallery->file_format,
             ],
         ]);
@@ -115,6 +117,7 @@ class ArtistGalleryController extends Controller
             'description' => 'nullable|string',
             'file_format' => 'required|string|max:10',
             'price' => 'nullable|numeric',
+            'status' => 'nullable|string|in:available,not_sold',
             'image' => 'required|image|mimes:png,jpg,jpeg|max:5120',
         ]);
 
@@ -130,17 +133,18 @@ class ArtistGalleryController extends Controller
             'image_url' => $imageUrl,
             'file_format' => $validated['file_format'],
             'price' => $validated['price'] ?? null,
-            'status' => 'available',
+            'status' => $validated['status'] ?? 'available',
         ]);
 
         return response()->json([
             'success' => true,
             'gallery' => [
                 'gallery_id' => $gallery->gallery_id,
-                'image_url' =>asset($gallery->image_url),
+                'image_url' => asset($gallery->image_url),
                 'title' => $gallery->title,
                 'description' => $gallery->description,
                 'price' => $gallery->price,
+                'status' => $gallery->status,
                 'file_format' => $gallery->file_format,
             ],
         ]);

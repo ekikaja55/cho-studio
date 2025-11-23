@@ -5,7 +5,7 @@
         <h2 style="font-size: 2rem; font-weight: bold; color: #444; margin-bottom: 8px;">Your Artwork Files Are
             Ready!</h2>
         <p style="font-size: 1.1rem; color: #444; margin-bottom: 0;">Hi <span
-                style="color: #444; font-weight: bold;">{{ $adoption->buyer_name }}</span>,</p>
+                style="color: #444; font-weight: bold;">{{ $adoption->email }}</span>,</p>
     </div>
     <div style="padding: 24px 32px 32px 32px;">
         <p style="font-size: 1.1rem; color: #444; margin-bottom: 18px; text-align: center;">
@@ -20,23 +20,16 @@
                 Order Summary</h3>
             <table style="width: 100%; border-collapse: collapse; font-size: 0.95rem; color: #444;">
                 <tr>
-                    <td style="padding: 4px 0; width: 40%; font-weight: 600;">Adoption ID:</td>
-                    <td style="padding: 4px 0; text-align: right;">#{{ $adoption->adoption_id }}</td>
-                </tr>
-                <tr>
                     <td style="padding: 4px 0; font-weight: 600;">Order Date:</td>
                     <td style="padding: 4px 0; text-align: right;">{{ $adoption->created_at->format('M d, Y') }}</td>
                 </tr>
+                @if(isset($adoption->gallery->price))
                 <tr>
                     <td style="padding: 4px 0; font-weight: 600;">Total Paid:</td>
-                    <td style="padding: 4px 0; text-align: right;">Rp{{ number_format($adoption->price, 0, ',', '.') }}
+                    <td style="padding: 4px 0; text-align: right;">Rp{{ number_format($adoption->gallery->price, 0, ',', '.') }}
                     </td>
                 </tr>
-                <tr>
-                    <td style="padding: 4px 0; font-weight: 600;">Files Delivered On:</td>
-                    <td style="padding: 4px 0; text-align: right;">{{ $adoption->delivered_at->format('M d, Y H:i A') }}
-                    </td>
-                </tr>
+                @endif
             </table>
         </div>
 
@@ -56,48 +49,45 @@
                         <td style="padding: 4px 0; font-weight: 600;">Original File Format:</td>
                         <td style="padding: 4px 0; text-align: right;">{{ $adoption->gallery->file_format }}</td>
                     </tr>
-                    <tr>
-                        <td style="padding: 4px 0; font-weight: 600;">Requested Format:</td>
-                        <td style="padding: 4px 0; text-align: right; color: #d65a5a; font-weight: bold;">
-                            {{ $adoption->delivery_notes ?: 'Original Format' }}</td>
-                    </tr>
                 </table>
             </div>
         @endif
 
-        {{-- Optional helpful info to make the email look legitimate --}}
-        <p style="font-size: 0.95rem; color: #444; margin-bottom: 18px; text-align: center;">
-            You are receiving the file via a <strong>{{ $adoption->delivery_type }}</strong> link as requested. Please use the button
-            below to access your high-resolution artwork.
-        </p>
+            @php
+                use Illuminate\Support\Str;
+                $deliveryValue = $adoption->delivery_file ?? '';
+                $deliveryType = $adoption->delivery_type ?? null;
+                $hasDelivery = !empty($deliveryValue) || !empty($deliveryType);
+                $isExternal = $hasDelivery && Str::startsWith($deliveryValue, ['http://', 'https://']);
+                $downloadUrl = null;
+                if ($hasDelivery) {
+                    $downloadUrl = $isExternal ? $deliveryValue : (isset($adoption->adoption_id) ? route('adoption.download', $adoption->adoption_id) : null);
+                }
+            @endphp
 
-        @php
-            // determine if delivery_file is an external link or not
-            $deliveryValue = $adoption->delivery_file ?? '';
-            $isExternal =
-                Str::startsWith($deliveryValue, ['http://', 'https://']) || $adoption->delivery_type === 'link';
-            $downloadUrl = $isExternal ? $deliveryValue : route('adoption.download', $adoption->adoption_id);
-        @endphp
+            @if($hasDelivery)
+                <div
+                    style="background: #a2e1db22; border-radius: 12px; padding: 18px; text-align: center; margin-bottom: 18px; border: 1px solid #a2e1db;">
+                    <span style="font-size: 1.1rem; color: #7dc8c1; font-weight: 600;">@if($isExternal) Access Your Download @else Access Your Artwork @endif</span><br>
+                    @if($downloadUrl)
+                        <a href="{{ $downloadUrl }}"
+                            style="display: inline-block; margin: 8px; padding: 12px 30px; background: #7dc8c1; color: #fff; font-size: 1rem; font-weight: bold; border-radius: 8px; text-decoration: none; box-shadow: 0 4px 8px #a2e1db66;"
+                            @if ($isExternal) rel="noopener noreferrer" @endif>Download
+                            <strong>{{ $adoption->gallery->title ?? 'your files' }}</strong></a>
+                    @else
+                        <p style="margin:12px 0; color:#444;">We have recorded your delivery request. You will receive a link here once the files are ready.</p>
+                    @endif
 
-        <div
-            style="background: #a2e1db22; border-radius: 12px; padding: 18px; text-align: center; margin-bottom: 18px; border: 1px solid #a2e1db;">
-            <span style="font-size: 1.1rem; color: #7dc8c1; font-weight: 600;">Access Your Artwork:</span><br>
-            <a href="{{ $downloadUrl }}"
-                style="display: inline-block; margin: 8px; padding: 12px 30px; background: #7dc8c1; color: #fff; font-size: 1rem; font-weight: bold; border-radius: 8px; text-decoration: none; box-shadow: 0 4px 8px #a2e1db66;"
-                @if ($isExternal) rel="noopener noreferrer" @endif>Download
-                <strong>{{ $adoption->gallery->title }}</strong></a>
-            <br>
-            <span style="font-size: 0.95rem; color: #444;">
-                @if ($isExternal)
-                    You will be redirected to an external hosting site (e.g., Google Drive) to download the file.
-                @else
-                    The file will be downloaded directly from Cho's Studio Website.
-                @endif
-                <br>
-                {{-- Show the file type and delivery type for clarity --}}
-                Your requested format: <strong>{{ $adoption->delivery_notes ?: $adoption->gallery->file_format }}</strong>
-            </span>
-        </div>
+                    <br>
+                    <span style="font-size: 0.95rem; color: #444;">
+                        @if($isExternal)
+                            You will be redirected to an external hosting site to download the file.
+                        @else
+                            The file will be downloaded directly from Cho's Studio Website when available.
+                        @endif
+                    </span>
+                </div>
+            @endif
 
         <p style="font-size: 0.85rem; color: #666; margin-bottom: 18px; text-align: center;">
             If you have any trouble accessing or downloading your files, reply to this email or contact support at <a

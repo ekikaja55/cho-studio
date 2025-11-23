@@ -72,6 +72,7 @@ Route::prefix('artist')->middleware(['auth', 'role:artist'])->group(function () 
     Route::get('/adoption_detail/{adoptionId}', [ArtistAdoptionDetailController::class, 'detail'])->name('artist.adoption_detail');
     Route::post('/adoptions/status/{adoptionId}', [ArtistAdoptionDetailController::class, 'update_order_status'])->name('artist.adoption_status_update');
     Route::post('/adoptions/confirm_payment/{adoptionId}', [ArtistAdoptionDetailController::class, 'confirm_payment'])->name('artist.adoption_confirm_payment');
+    Route::post('/adoptions/invalidate_payment/{adoptionId}', [ArtistAdoptionDetailController::class, 'invalidate_payment'])->name('artist.adoption_invalidate_payment');
     Route::post('/adoptions/save_notes/{adoptionId}', [ArtistAdoptionDetailController::class, 'save_notes'])->name('artist.adoption_save_notes');
     Route::post('/adoptions/deliver_file/{adoptionId}', [ArtistAdoptionDetailController::class, 'deliver_file'])->name('artist.adoption_deliver_file');
     Route::post('/adoptions/mark_complete/{adoptionId}', [ArtistAdoptionDetailController::class, 'mark_complete'])->name('artist.adoption_mark_complete');

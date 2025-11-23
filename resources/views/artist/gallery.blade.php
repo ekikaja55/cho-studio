@@ -103,7 +103,7 @@
                         data-title="{{ $item['title'] ?? '' }}"
                         data-desc="{{ $item['description'] ?? '' }}"
                         data-price="{{ $item['price'] !== null ? $item['price'] : '' }}"
-                        data-purchase="{{ $item['price'] !== null ? 'true' : 'false' }}"
+                        data-purchase="{{ $item['status'] === 'available' ? 'true' : 'false' }}"
                         data-file="{{ $item['file_format'] ?? '' }}"
                     >
                         <img src="{{  asset($item['image_url']) }}" alt="Image" class="rounded-md object-cover w-full h-full border-2 border-black ">
@@ -226,17 +226,17 @@ document.addEventListener('DOMContentLoaded', function () {
         
         // Ambil data dari card
         const price = card.dataset.price;
-        const hasPrice = price && price.trim() !== "" && !isNaN(price);
+        const isPurchasable = card.dataset.purchase === 'true';
 
         // Set checkbox dan input harga
-        purchaseCheckbox.checked = hasPrice;
+        purchaseCheckbox.checked = isPurchasable;
 
-        if (hasPrice) {
+        if (isPurchasable) {
             priceContainer.classList.remove('hidden');
-            priceInput.value = price;
+            priceInput.value = price || '';
         } else {
             priceContainer.classList.add('hidden');
-            priceInput.value = '';
+            priceInput.value = price || '';
         }
 
 
@@ -263,6 +263,14 @@ document.addEventListener('DOMContentLoaded', function () {
         const formData = new FormData(artworkForm);
         if (imageFile) formData.set("image", imageFile);
         if (!imageFile) formData.delete("image");
+        
+        // Add status based on checkbox
+        if (purchaseCheckbox.checked) {
+            formData.set("status", "available");
+        } else {
+            formData.set("status", "not_sold");
+            formData.delete("price"); // Remove price if not purchasable
+        }
 
         submitBtn.disabled = true;
         submitBtn.textContent = editMode ? "Updating..." : "Adding...";
@@ -402,6 +410,7 @@ document.addEventListener('DOMContentLoaded', function () {
         card.dataset.title = g.title || "";
         card.dataset.desc = g.description || "";
         card.dataset.price = g.price || "";
+        card.dataset.purchase = g.status === 'available' ? 'true' : 'false';
         card.dataset.file = g.file_format || "";
 
         const img = document.createElement("img");
@@ -420,6 +429,7 @@ document.addEventListener('DOMContentLoaded', function () {
         card.dataset.title = g.title;
         card.dataset.desc = g.description;
         card.dataset.price = g.price;
+        card.dataset.purchase = g.status === 'available' ? 'true' : 'false';
         card.dataset.file = g.file_format;
 
         const img = card.querySelector("img");
