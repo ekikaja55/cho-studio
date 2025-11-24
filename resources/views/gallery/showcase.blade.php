@@ -61,7 +61,7 @@
                             $featured = $available->first();
                             $img = asset($featured->image_url);
                         @endphp
-                        <div class="rounded-3xl border-4 border-black shadow-[0.6vh_0.6vh_0_black] w-full h-full overflow-hidden bg-white cursor-pointer relative hover:scale-[1.03] transition-all duration-300 showcase-item group"
+                        <div class="rounded-3xl border-4 border-black shadow-[0.6vh_0.6vh_0_black] w-full h-full overflow-hidden bg-white cursor-pointer relative hover:scale-[1.03] transition-all duration-300 showcase-item group protected-image-container watermark-tiled"
                             data-id="{{ $featured->gallery_id }}">
                             <img src="{{ $img }}" data-original-src="{{ $img }}" alt="Featured Artwork"
                                 class="object-cover w-full h-full group-hover:brightness-110 transition-all duration-300"
@@ -92,7 +92,7 @@
                                 $img = asset($art->image_url);
                                 $isSold = $art->status === 'sold';
                             @endphp
-                            <div class="rounded-2xl border-4 border-black shadow-[0.4vh_0.4vh_0_black] w-[49%] h-full overflow-hidden bg-white hover:scale-[1.02] transition-all duration-300 showcase-item group cursor-pointer"
+                            <div class="rounded-2xl border-4 border-black shadow-[0.4vh_0.4vh_0_black] w-[49%] h-full overflow-hidden bg-white hover:scale-[1.02] transition-all duration-300 showcase-item group cursor-pointer protected-image-container watermark-tiled"
                                 data-id="{{ $art->gallery_id }}">
                                 <img src="{{ $img }}" data-original-src="{{ $img }}"
                                     alt="Gallery Artwork"
@@ -113,7 +113,7 @@
                                 $img = asset($art->image_url);
                                 $isSold = $art->status === 'sold';
                             @endphp
-                            <div class="rounded-2xl border-4 border-black shadow-[0.4vh_0.4vh_0_black] w-[49%] h-full overflow-hidden bg-white hover:scale-[1.02] transition-all duration-300 showcase-item group cursor-pointer"
+                            <div class="rounded-2xl border-4 border-black shadow-[0.4vh_0.4vh_0_black] w-full h-full overflow-hidden bg-white hover:scale-[1.02] transition-all duration-300 showcase-item group cursor-pointer protected-image-container watermark-tiled"
                                 data-id="{{ $art->gallery_id }}">
                                 <img src="{{ $img }}" data-original-src="{{ $img }}"
                                     alt="Gallery Artwork"

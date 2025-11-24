@@ -67,7 +67,7 @@
             </div>
 
             {{-- Kotak Gambar Preview --}}
-            <div class="w-full aspect-square bg-white rounded-2xl overflow-hidden flex justify-center items-center border-4 border-black relative mb-6">
+            <div class="w-full aspect-square bg-white rounded-2xl overflow-hidden flex justify-center items-center border-4 border-black relative mb-6 protected-image-container watermark-tiled">
                 <img id="previewImage" src="" alt="Preview" class="w-full h-full object-cover hidden transition-opacity duration-300">
                 <div id="previewPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-[#dceef4] to-[#c6e3f0] text-center p-4">
                     <svg class="w-16 h-16 text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
@@ -111,7 +111,7 @@
                     data-image="{{ $imageUrl }}"
                     data-status="{{ $imageStatus }}">
                     
-                    <div class="w-full h-full overflow-hidden bg-white rounded-lg">
+                    <div class="w-full h-full overflow-hidden bg-white rounded-lg protected-image-container watermark-tiled">
                         <img src="{{ $imageUrl }}" alt="{{ $design->title }}"
                             class="w-full h-full object-cover group-hover:brightness-110 transition-all"
                             loading="lazy"
