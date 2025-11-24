@@ -23,12 +23,12 @@
     .driver-popover.driverjs-theme button {
         background-color: #a2e1db; color: #000; border: 2px solid #000;
         border-radius: 0.5rem; padding: 0.5rem 1rem; font-weight: bold;
-        text-shadow: none; transition: all 0.2s;
+        text-shadow: none; transition: all 0.2s; margin: 0.2rem;
     }
     .driver-popover.driverjs-theme button:hover {
         background-color: #b4a6d5; transform: translateY(-2px); box-shadow: 2px 2px 0 #000;
     }
-    .driver-popover-close-btn { color: #000 !important; font-weight: bold; background-color: transparent!important;  margin:1rem; padding: 0.1rem 0.1rem !important; }
+    .driver-popover-close-btn { color: #000 !important; font-weight: bold; background-color: transparent!important;  margin: 1rem !important;; padding: 0.1rem 0.1rem !important; }
 </style>
 
 {{-- 3. SECTION UTAMA: READY TO BUY --}}
@@ -179,7 +179,7 @@
 {{-- 5. SCRIPT UTAMA (GABUNGAN SEMUA LOGIC) --}}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        console.log("=== ALL-IN-ONE SCRIPT LOADED ===");
+        console.log("=== ALL-IN-ONE SCRIPT LOADED (FIXED BACK BUTTON) ===");
 
         // --- DEFINISI ELEMENT ---
         const grid = document.getElementById('designGrid');
@@ -304,7 +304,7 @@
 
 
         // ==========================================
-        // D. DRIVER.JS TUTORIAL (The "i" Function)
+        // D. DRIVER.JS TUTORIAL (FIXED BACK BUTTON)
         // ==========================================
         const driver = window.driver.js.driver;
         const btnOpenInfo = document.getElementById('manualInfoBtn');
@@ -323,14 +323,29 @@
                     }
                 },
                 { element: '#previewPanel', popover: { title: '2. Check Details', description: 'Preview, price, and format appear here.' } },
-                { element: '#buyButton', popover: { title: '3. Click Buy', description: 'Press this to open the form.' } },
+                
+                // --- STEP 3 (BUY BUTTON) ---
+                { 
+                    element: '#buyButton', 
+                    popover: { title: '3. Click Buy', description: 'Press this to open the form.' },
+                    // PERBAIKAN DISINI:
+                    // Saat tutorial masuk ke step ini (baik dari Next maupun Back dari step 4),
+                    // Kita paksa TUTUP modalnya. Jadi kalau user klik Back dari form, formnya hilang.
+                    onHighlightStarted: () => {
+                        closePurchaseModal();
+                    }
+                },
+
+                // --- STEP 4 (MODAL FORM) ---
                 { 
                     element: '#purchaseModal', 
                     popover: { title: '4. Fill The Form', description: 'Double check the item details.' },
                     onHighlightStarted: () => {
+                        // Setup Data Dummy jika user belum klik apa-apa
                         if(!selectedDesign) {
                             selectedDesign = { id: '0', title: 'Tutorial Artwork', priceFormatted: 'Rp 100.000', image: 'https://via.placeholder.com/300', format: 'PNG', status: 'available' };
                         }
+                        // Paksa BUKA Modal saat masuk step ini
                         openPurchaseModal();
                     }
                 },
@@ -339,13 +354,15 @@
                 { 
                     element: '#submitButton', 
                     popover: { title: 'All Set!', description: 'Click submit and wait for verification.' },
+                    // Tutup modal saat selesai
                     onDeselected: () => { closePurchaseModal(); } 
                 }
-            ]
+            ],
+            // Jaga-jaga jika user close paksa di tengah jalan
+            onDestroyed: () => { closePurchaseModal(); }
         });
 
         const startTutorial = () => {
-            // Cek ada item available ga
             if(!document.querySelector('.design-item[data-status="available"]')) {
                 alert("No items available for tutorial currently.");
                 return;
@@ -359,9 +376,8 @@
 
 
         // ==========================================
-        // E. SCROLL POP-UP LOGIC (NEW)
+        // E. SCROLL POP-UP LOGIC
         // ==========================================
-        
         const openScrollPopup = () => {
             if(!scrollPopup) return;
             scrollPopup.classList.remove('hidden');
@@ -382,33 +398,29 @@
             }, 300);
         };
 
-        // Event Listeners Pop-up
         if(btnCloseScroll) btnCloseScroll.addEventListener('click', closeScrollPopup);
         if(btnCloseScrollX) btnCloseScrollX.addEventListener('click', closeScrollPopup);
         
-        // Tombol "Start Tutorial" di dalam Pop-up
         if(btnStartTour) {
             btnStartTour.addEventListener('click', () => {
-                closeScrollPopup(); // Tutup pop-up dulu
+                closeScrollPopup();
                 setTimeout(() => {
-                    startTutorial(); // Baru mulai tutorial Driver.js
-                }, 400); // Delay dikit biar animasi tutup kelar
+                    startTutorial();
+                }, 400);
             });
         }
 
-        // Scroll Observer
         if(sectionReady && scrollPopup) {
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if(entry.isIntersecting) {
-                        // Cek Session Storage (agar muncul sekali saja per sesi)
                         if(!sessionStorage.getItem('hasSeenScrollPopup')) {
                             openScrollPopup();
                             sessionStorage.setItem('hasSeenScrollPopup', 'true');
                         }
                     }
                 });
-            }, { threshold: 0.3 }); // Muncul saat 30% section terlihat
+            }, { threshold: 0.3 });
             
             observer.observe(sectionReady);
         }

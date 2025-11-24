@@ -63,14 +63,6 @@ class LoginPageController extends Controller
         ])->withInput();
     }
     
-    public function showRegister()
-    {
-        if (!request()->has('accepted')) {
-            return redirect()->route('terms');
-        }
-
-        return view('register');
-    }
     public function register()
     {
         return view('register');
