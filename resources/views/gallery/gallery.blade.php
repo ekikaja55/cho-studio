@@ -161,5 +161,6 @@
                 }
             }, true);
         })();
+        
     </script>
 @endsection
