@@ -29,11 +29,9 @@ class HistoryMemberController extends Controller
         // 2. Query Commissions (if 'all' or 'commission' is selected)
         if ($type === 'all' || strtolower($type) === 'commission') {
             $commissions = Commission::where('member_id', $user->member_id)
-                // Apply search filter if present
                 ->when($search, function ($query, $term) {
-                    return $query->where('title', 'like', '%' . $term . '%');
+                    return $query->where('description', 'like', '%' . $term . '%');
                 })
-                // Apply commission status filter if not 'all'
                 ->when(strtolower($commissionStatus) !== 'all', function ($query) use ($commissionStatus) {
                     return $query->where('progress_status', strtolower($commissionStatus));
                 })
@@ -47,14 +45,14 @@ class HistoryMemberController extends Controller
             }));
         }
 
-        // 3. Query Adoptions (if 'all' or 'adoption' is selected)
+        // 3. Query Adoptions
         if ($type === 'all' || strtolower($type) === 'adoption') {
-            $adoptions = Adoption::where('buyer_email', $user->email)
-                // Apply search filter if present
+            $adoptions = Adoption::where('email', $user->email)
                 ->when($search, function ($query, $term) {
-                    return $query->where('title', 'like', '%' . $term . '%');
+                    return $query->whereHas('gallery', function ($galleryQuery) use ($term) {
+                        $galleryQuery->where('title', 'like', '%' . $term . '%');
+                    });
                 })
-                // Apply adoption status filter if not 'all'
                 ->when(strtolower($adoptionStatus) !== 'all', function ($query) use ($adoptionStatus) {
                     return $query->where('order_status', strtolower($adoptionStatus));
                 })
@@ -68,6 +66,7 @@ class HistoryMemberController extends Controller
             }));
         }
 
+
         // 4. Sort and return
         $historyData = $historyData->sortByDesc('created_at')->values();
 
@@ -79,10 +78,17 @@ class HistoryMemberController extends Controller
 
     public function adoption_detail($id)
     {
-        $adoption = Adoption::with("gallery")->find($id);
+        $user = auth()->user();
+
+        // PERBAIKAN: Tambahkan pengecekan kepemilikan (berdasarkan email user)
+        $adoption = Adoption::with("gallery")
+            ->where('id', $id)
+            ->where('email', $user->email) // Pastikan email cocok dengan user login
+            ->first();
 
         if (!$adoption) {
-            abort(404, 'Adoption data not found.');
+            // Menggunakan 404 agar user iseng tidak tahu bahwa ID tersebut sebenarnya ada tapi milik orang lain
+            abort(404, 'Data adopsi tidak ditemukan atau Anda tidak memiliki akses.');
         }
 
         return view('member.history_adoption_detail', ['adoption' => $adoption]);
@@ -90,11 +96,18 @@ class HistoryMemberController extends Controller
 
     public function commission_detail($id)
     {
+        $user = auth()->user();
+
+        // PERBAIKAN: Tambahkan pengecekan kepemilikan (berdasarkan member_id)
+        // Menggunakan 'where' sebelum 'first' atau 'firstOrFail'
         $commission = Commission::with(['progressImages', 'member'])
-            ->findOrFail($id);
+            ->where('commission_id', $id) // Pastikan nama kolom primary key benar (id atau commission_id)
+            ->where('member_id', $user->member_id) // KUNCI KEAMANAN: Hanya milik user login
+            ->first();
 
         if (!$commission) {
-            abort(404, 'Commission data not found.');
+            // Arahkan ke 404 jika data tidak ditemukan atau bukan milik user tersebut
+            abort(404, 'Riwayat komisi tidak ditemukan atau Anda tidak berhak mengakses halaman ini.');
         }
 
         return view('member.history_commission_detail', ['commission' => $commission, 'member' => $commission->member]);
