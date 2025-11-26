@@ -6,7 +6,7 @@ RUN apk add --no-cache nodejs npm
 COPY . .
 
 # 2. Build Frontend Assets (The "npm run build" step)
-RUN npm install
+RUN npm ci --no-audit
 RUN npm run build
 
 # Image config

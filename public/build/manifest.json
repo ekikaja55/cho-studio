@@ -1,0 +1,64 @@
+{
+  "resources/css/app.css": {
+    "file": "assets/app-CklUbw7H.css",
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-DRTdO28B.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true,
+    "css": [
+      "assets/app-4mLq9Wuc.css"
+    ]
+  },
+  "resources/js/artist/adoption_detail.js": {
+    "file": "assets/adoption_detail-4iKuep5V.js",
+    "name": "adoption_detail",
+    "src": "resources/js/artist/adoption_detail.js",
+    "isEntry": true
+  },
+  "resources/js/artist/adoptions.js": {
+    "file": "assets/adoptions-BER4JRw2.js",
+    "name": "adoptions",
+    "src": "resources/js/artist/adoptions.js",
+    "isEntry": true
+  },
+  "resources/js/artist/commissions.js": {
+    "file": "assets/commissions-PDaKfXeS.js",
+    "name": "commissions",
+    "src": "resources/js/artist/commissions.js",
+    "isEntry": true
+  },
+  "resources/js/artist/commissions_detail.js": {
+    "file": "assets/commissions_detail-DN6k-zoV.js",
+    "name": "commissions_detail",
+    "src": "resources/js/artist/commissions_detail.js",
+    "isEntry": true
+  },
+  "resources/js/gallery.js": {
+    "file": "assets/gallery-CYh0rdgb.js",
+    "name": "gallery",
+    "src": "resources/js/gallery.js",
+    "isEntry": true
+  },
+  "resources/js/member/commission_form.js": {
+    "file": "assets/commission_form-CI1rBEtu.js",
+    "name": "commission_form",
+    "src": "resources/js/member/commission_form.js",
+    "isEntry": true
+  },
+  "resources/js/member/history.js": {
+    "file": "assets/history-t6CP7VEH.js",
+    "name": "history",
+    "src": "resources/js/member/history.js",
+    "isEntry": true
+  },
+  "resources/js/member/history_commission_detail.js": {
+    "file": "assets/history_commission_detail-D7Hg05Qo.js",
+    "name": "history_commission_detail",
+    "src": "resources/js/member/history_commission_detail.js",
+    "isEntry": true
+  }
+}
