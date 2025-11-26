@@ -5,7 +5,7 @@ WORKDIR /app
 
 # Install dependencies and build assets
 COPY package.json package-lock.json ./
-RUN npm ci --no-audit
+RUN npm ci --no-audit --no-optional
 COPY . .
 RUN npm run build
 
