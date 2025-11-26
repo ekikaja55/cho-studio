@@ -19,6 +19,8 @@ services:
         value: https://chostudio.onrender.com
       - key: ASSET_URL
         value: https://chostudio.onrender.com
+      - key: FORCE_HTTPS
+        value: true
       - key: LOG_CHANNEL
         value: stack
       - key: LOG_LEVEL
