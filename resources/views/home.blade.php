@@ -23,7 +23,7 @@
             {{-- Socials --}}
             <div class="flex items-center gap-3 my-2 text-black">
                 {{-- Instagram --}}
-                <a href="https://instagram.com" class="flex items-center gap-1 hover:underline">
+                <a href="https://www.instagram.com/cho.lazey/" class="flex items-center gap-1 hover:underline">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
                         class="bi bi-instagram" viewBox="0 0 16 16">
                         <path
@@ -46,7 +46,7 @@
             {{-- Navigation Buttons --}}
             <nav class="mt-4 font-[HammersmithOne-Regular]">
                 @php
-                    $buttons = [['Gallery', '/gallery'], ['Shop', '#'], ['Member', '/login']];
+                    $buttons = [['Gallery', '/gallery'], ['Shop', '/gallery'], ['Member', '/login']];
                 @endphp
 
                 <ul>
@@ -76,56 +76,56 @@
                 {{-- About --}}
                 <div class="mb-6 mt-[5vh]">
                     <h1 class="text-3xl lg:text-4xl font-bold">About The Artist</h1>
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vero eum esse in provident dignissimos
-                        reiciendis molestias assumenda nesciunt autem expedita.</p>
+                    <p>Heya everyone. I'm a self-thought, aspiring artist ready to be of service! I do digital art, merch designs,
+                        and a bit of 3D modelling. Come check out my artworks and shop!</p>
                 </div>
 
 
                 {{-- Recent Works --}}
-                @if($designs->count() > 0)
-                <div class="p-5 rounded-xl">
-                    <h1 class="text-2xl font-bold mb-4">Recent Works</h1>
+                @if ($designs->count() > 0)
+                    <div class="p-5 rounded-xl">
+                        <h1 class="text-2xl font-bold mb-4">Recent Works</h1>
 
-                    <div class="flex items-center gap-4">
-                        {{-- Selected art --}}
-                        <div id="selectedArt" class="flex flex-col items-center w-1/4 transition-all duration-500">
-                            <img id="selectedImage" src="{{ asset($designs->first()->image_url) }}" alt="Selected Art"
-                                class="rounded-md border-2 border-black w-full h-auto object-cover shadow-lg">
-                        </div>
-
-                        {{-- Scrollable right section --}}
-                        <div class="relative flex-1 overflow-hidden">
-                            <div id="carousel" class="flex items-center transition-transform duration-700 ease-in-out">
-                                @foreach ($designs->skip(1) as $design)
-                                    <div class="w-1/3 flex-shrink-0 px-2">
-                                        <img src="{{ asset($design->image_url) }}" alt="{{ $design->title }}"
-                                            class="rounded-md border-2 border-black w-full h-auto object-cover opacity-80 hover:opacity-100 transition cursor-pointer"
-                                            data-title="{{ $design->title }}" data-desc="{{ $design->description }}">
-                                    </div>
-                                @endforeach
+                        <div class="flex items-center gap-4">
+                            {{-- Selected art --}}
+                            <div id="selectedArt" class="flex flex-col items-center w-1/4 transition-all duration-500">
+                                <img id="selectedImage" src="{{ asset($designs->first()->image_url) }}" alt="Selected Art"
+                                    class="rounded-md border-2 border-black w-full h-auto object-cover shadow-lg">
                             </div>
 
-                            {{-- Arrows --}}
-                            <button id="prev"
-                                class="absolute left-0 top-1/2 -translate-y-1/2 bg-black text-white px-2 py-1 rounded-full opacity-70 hover:opacity-100">‹</button>
-                            <button id="next"
-                                class="absolute right-0 top-1/2 -translate-y-1/2 bg-black text-white px-2 py-1 rounded-full opacity-70 hover:opacity-100">›</button>
+                            {{-- Scrollable right section --}}
+                            <div class="relative flex-1 overflow-hidden">
+                                <div id="carousel" class="flex items-center transition-transform duration-700 ease-in-out">
+                                    @foreach ($designs->skip(1) as $design)
+                                        <div class="w-1/3 flex-shrink-0 px-2">
+                                            <img src="{{ asset($design->image_url) }}" alt="{{ $design->title }}"
+                                                class="rounded-md border-2 border-black w-full h-auto object-cover opacity-80 hover:opacity-100 transition cursor-pointer"
+                                                data-title="{{ $design->title }}" data-desc="{{ $design->description }}">
+                                        </div>
+                                    @endforeach
+                                </div>
+
+                                {{-- Arrows --}}
+                                <button id="prev"
+                                    class="absolute left-0 top-1/2 -translate-y-1/2 bg-black text-white px-2 py-1 rounded-full opacity-70 hover:opacity-100">‹</button>
+                                <button id="next"
+                                    class="absolute right-0 top-1/2 -translate-y-1/2 bg-black text-white px-2 py-1 rounded-full opacity-70 hover:opacity-100">›</button>
+                            </div>
+                        </div>
+
+                        {{-- Description --}}
+                        <div class="mt-4">
+                            <p class="font-bold text-lg" id="descTitle">{{ $designs->first()->title }}</p>
+                            <p id="descText" class="text-sm text-gray-700">{{ $designs->first()->description }}</p>
                         </div>
                     </div>
-
-                    {{-- Description --}}
-                    <div class="mt-4">
-                        <p class="font-bold text-lg" id="descTitle">{{ $designs->first()->title }}</p>
-                        <p id="descText" class="text-sm text-gray-700">{{ $designs->first()->description }}</p>
-                    </div>
-                </div>
                 @else
-                <div class="p-5 rounded-xl">
-                    <h1 class="text-2xl font-bold mb-4">Recent Works</h1>
-                    <div class="bg-gray-100 border-2 border-gray-300 rounded-xl p-8 text-center">
-                        <p class="text-gray-600">No gallery items available at the moment.</p>
+                    <div class="p-5 rounded-xl">
+                        <h1 class="text-2xl font-bold mb-4">Recent Works</h1>
+                        <div class="bg-gray-100 border-2 border-gray-300 rounded-xl p-8 text-center">
+                            <p class="text-gray-600">No gallery items available at the moment.</p>
+                        </div>
                     </div>
-                </div>
                 @endif
 
                 {{-- Script --}}
