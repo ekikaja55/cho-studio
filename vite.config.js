@@ -9,7 +9,7 @@ export default defineConfig({
             input: [
                 "resources/css/app.css",
                 "resources/js/app.js",
-                "resources/js/artist/commisions.js",
+                "resources/js/artist/commissions.js",
                 "resources/js/artist/commissions_detail.js",
                 "resources/js/artist/adoptions.js",
                 "resources/js/artist/adoption_detail.js",
