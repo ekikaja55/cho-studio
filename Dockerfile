@@ -2,7 +2,15 @@
 FROM node:18 AS frontend
 WORKDIR /app
 COPY package*.json ./
-RUN npm install
+
+# FIX: Force a clean npm install to resolve the rollup/native optional dependency bug.
+# The error "Cannot find module @rollup/rollup-linux-x64-gnu" often points to an
+# issue where optional native dependencies were improperly installed/linked by npm.
+# We explicitly clean up residual files and re-run the install for stability.
+RUN npm cache clean --force && \
+    rm -rf node_modules package-lock.json && \
+    npm install
+
 COPY . .
 RUN npm run build
 
@@ -22,7 +30,7 @@ WORKDIR /var/www
 # Copy app files
 COPY . .
 
-# Copy built frontend from Stage 1
+# Copy built frontend from Stage 1. Preserving user's configured output path.
 COPY --from=frontend /app/public/dist ./public/dist
 
 # Install PHP dependencies
