@@ -31,11 +31,11 @@ WORKDIR /var/www
 COPY . .
 
 # Copy built frontend from Stage 1. Preserving user's configured output path.
-COPY --from=frontend /app/public/dist ./public/dist
+COPY --from=frontend /app/public/build ./public/dist
 
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
-
+    
 # Laravel setup
 RUN php artisan config:clear && \
     php artisan route:clear && \
