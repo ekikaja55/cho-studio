@@ -1,0 +1,16 @@
+/vendor
+/node_modules
+.env
+.git
+.gitignore
+.editorconfig
+tests
+phpunit.xml
+*.md
+.vscode
+.idea
+storage/logs/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+!storage/app/ca.pem

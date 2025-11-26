@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -10,7 +11,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class Member extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     /**
      * The table associated with the model.
@@ -31,7 +32,6 @@ class Member extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
         'username',
         'email',
         'password',
@@ -80,7 +80,6 @@ class Member extends Authenticatable
 
         // Create the member with null safety
         return self::create([
-            'name' => $data['name'],
             'username' => $data['username'],
             'email' => $data['email'],
             'password' => $data['password'], // Will be automatically hashed by the 'hashed' cast
@@ -89,5 +88,13 @@ class Member extends Authenticatable
             'instagram' => !empty($data['instagram']) ? $data['instagram'] : null,
             'role' => $data['role'] ?? 'client', // Default to 'client' if not specified
         ]);
+    }
+
+    /**
+     * Relationship to commissions
+     */
+    public function commissions()
+    {
+        return $this->hasMany(Commission::class, 'member_id', 'member_id');
     }
 }
