@@ -5,6 +5,16 @@ set -e
 
 echo "Starting Laravel application..."
 
+# Verify Vite manifest exists
+if [ ! -f "public/build/manifest.json" ]; then
+    echo "ERROR: Vite manifest not found at public/build/manifest.json"
+    echo "Listing public/build contents:"
+    ls -la public/build/ || echo "public/build directory does not exist"
+    exit 1
+fi
+
+echo "Vite manifest found successfully"
+
 # Run Laravel setup commands
 php artisan config:cache
 php artisan route:cache

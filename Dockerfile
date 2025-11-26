@@ -40,11 +40,18 @@ RUN ln -s /etc/nginx/sites-available/default.conf /etc/nginx/sites-enabled/defau
 # Tambahkan konfigurasi Supervisord untuk menjalankan PHP-FPM dan Nginx
 COPY ./.docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-# Copy app files
-COPY . .
+# Copy app files (excluding node_modules and vendor via .dockerignore)
+COPY --chown=www-data:www-data . .
 
-# Copy built frontend from Stage 1
-COPY --from=frontend /app/public/build ./public/build
+# Copy built frontend from Stage 1 and verify
+COPY --from=frontend --chown=www-data:www-data /app/public/build ./public/build
+RUN echo "Verifying Vite build files:" && \
+    ls -la public/build/ && \
+    if [ ! -f "public/build/manifest.json" ]; then \
+        echo "ERROR: manifest.json not found!"; \
+        exit 1; \
+    fi && \
+    echo "manifest.json found successfully"
 
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
