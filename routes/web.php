@@ -29,6 +29,14 @@ Route::get('/', function () {
     return view('starting');
 });
 
+// Health check endpoint for Render
+Route::get('/health', function () {
+    return response()->json([
+        'status' => 'ok',
+        'timestamp' => now()->toIso8601String(),
+    ]);
+});
+
 Route::get('/login', [LoginPageController::class, 'login'])->name('login');
 Route::get('/register', [LoginPageController::class, 'register'])->name('register');
 Route::get('/termsnconditions', [LoginPageController::class, 'termsnconditions'])->name('termsnconditions');

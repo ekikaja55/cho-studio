@@ -17,7 +17,7 @@ FROM php:8.2-fpm AS backend
 # 1. INSTALL SYSTEM DEPENDENCIES (Nginx dan Supervisord DITAMBAHKAN)
 RUN apt-get update && apt-get install -y \
     git curl unzip libpq-dev libonig-dev libzip-dev zip \
-    nginx supervisor \
+    nginx supervisor ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
@@ -27,6 +27,9 @@ RUN docker-php-ext-install pdo pdo_mysql mbstring zip
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www
+
+# Configure PHP-FPM to listen on TCP instead of socket
+RUN echo "listen = 127.0.0.1:9000" >> /usr/local/etc/php-fpm.d/zz-docker.conf
 
 # 2. KONFIGURASI NGINX DAN SUPERVISOR
 # Hapus default Nginx dan tambahkan konfigurasi Laravel
@@ -40,20 +43,22 @@ COPY ./.docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 # Copy app files
 COPY . .
 
-# Copy built frontend from Stage 1. MENGGUNAKAN 'public/build'
-COPY --from=frontend /app/public/build ./public/dist
+# Copy built frontend from Stage 1
+COPY --from=frontend /app/public/build ./public/build
 
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
-    
-# Laravel setup
-RUN php artisan config:clear && \
-    php artisan route:clear && \
-    php artisan view:clear
 
 # Set permissions for Laravel storage/cache
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache && \
     chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
-# 3. CMD BARU: Gunakan Supervisord untuk menjalankan Nginx dan PHP-FPM
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+# Create startup script
+COPY ./.docker/start.sh /start.sh
+RUN chmod +x /start.sh
+
+# Expose port 80
+EXPOSE 80
+
+# 3. Use startup script to run Laravel commands and supervisord
+CMD ["/start.sh"]
