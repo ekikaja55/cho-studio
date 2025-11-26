@@ -7,7 +7,8 @@
         <aside class="flex flex-col items-center h-full w-[25%] bg-[#f0ebe3] border-r-4 border-black">
 
             {{-- Persona Image --}}
-            <div class="bg-[#a2e1db] w-[30vh] h-[30vh] m-3 mt-10 rounded-2xl outline-3 outline-black shadow-[1vh_1vh_0_black] overflow-hidden">
+            <div
+                class="bg-[#a2e1db] w-[30vh] h-[30vh] m-3 mt-10 rounded-2xl outline-3 outline-black shadow-[1vh_1vh_0_black] overflow-hidden">
                 <img src="{{ asset('assets/cho_asset/Talking cho.png') }}" alt="Cho's OC" class="w-full h-full object-contain">
             </div>
 
@@ -65,8 +66,7 @@
         </aside>
 
         {{-- Main Content --}}
-        <main
-            class="flex items-center justify-center h-full w-full 
+        <main class="flex items-center justify-center h-full w-full 
                  ">
             <section
                 class="flex flex-col justify-center bg-[#f0ebe3]
@@ -80,142 +80,98 @@
                         reiciendis molestias assumenda nesciunt autem expedita.</p>
                 </div>
 
-  
-{{-- Recent Works --}}
-@php
-    $designs = [
-        [
-            'gallery_id' => 1,
-            'title' => 'Crimson Sky',
-            'description' => 'A bold and emotional depiction of a sunset over a vast landscape.',
-            'image_url' => 'https://i.pinimg.com/1200x/20/79/25/2079253ad6c3d70f2c03c95cbd5d074a.jpg',
-            'file_format' => 'PNG',
-            'status' => 'published',
-            'price' => 'Rp 270.000',
-        ],
-        [
-            'gallery_id' => 2,
-            'title' => 'Azure Horizon',
-            'description' => 'Cool blue tones depicting the serenity of the open sea.',
-            'image_url' => 'https://i.pinimg.com/736x/df/d0/9e/dfd09ef4bdf9be5d4c107735845541bb.jpg',
-            'file_format' => 'JPG',
-            'status' => 'published',
-            'price' => 'Rp 300.000',
-        ],
-        [
-            'gallery_id' => 3,
-            'title' => 'Golden Bloom',
-            'description' => 'A warm, radiant painting of a field in full bloom under sunlight.',
-            'image_url' => 'https://i.pinimg.com/736x/79/d0/ca/79d0cae8bc9914c7271ec52caf857e9b.jpg',
-            'file_format' => 'PNG',
-            'status' => 'published',
-            'price' => 'Rp 250.000',
-        ],
-        [
-            'gallery_id' => 4,
-            'title' => 'Midnight Dream',
-            'description' => 'A surreal illustration inspired by starry nights and cosmic imagination.',
-            'image_url' => 'https://i.pinimg.com/1200x/1f/7e/cd/1f7ecd773b72df9587a6e3440f7f23bb.jpg',
-            'file_format' => 'SVG',
-            'status' => 'published',
-            'price' => 'Rp 290.000',
-        ],
-        [
-            'gallery_id' => 5,
-            'title' => 'Lush Garden',
-            'description' => 'A detailed, vivid representation of nature’s tranquility.',
-            'image_url' => 'https://i.pinimg.com/1200x/51/a1/c5/51a1c5033466b0c5f82b8a37e1fcf03b.jpg',
-            'file_format' => 'PNG',
-            'status' => 'published',
-            'price' => 'Rp 310.000',
-        ],
-    ];
-@endphp
 
-<div class="p-5 rounded-xl">
-    <h1 class="text-2xl font-bold mb-4">Recent Works</h1>
+                {{-- Recent Works --}}
+                @if($designs->count() > 0)
+                <div class="p-5 rounded-xl">
+                    <h1 class="text-2xl font-bold mb-4">Recent Works</h1>
 
-    <div class="flex items-center gap-4">
-        {{-- Static selected art --}}
-        <div id="selectedArt" class="flex flex-col items-center w-1/4 transition-all duration-500">
-            <img id="selectedImage" src="{{ $designs[0]['image_url'] }}" alt="Selected Art"
-                 class="rounded-md border-2 border-black w-full h-auto object-cover shadow-lg">
-        </div>
+                    <div class="flex items-center gap-4">
+                        {{-- Selected art --}}
+                        <div id="selectedArt" class="flex flex-col items-center w-1/4 transition-all duration-500">
+                            <img id="selectedImage" src="{{ asset($designs->first()->image_url) }}" alt="Selected Art"
+                                class="rounded-md border-2 border-black w-full h-auto object-cover shadow-lg">
+                        </div>
 
-        {{-- Scrollable right section --}}
-        <div class="relative flex-1 overflow-hidden">
-            <div id="carousel" class="flex transition-transform duration-700 ease-in-out">
-                @foreach (array_slice($designs, 1) as $design)
-                    <div class="w-1/3 flex-shrink-0 px-2">
-                        <img 
-                            src="{{ $design['image_url'] }}" 
-                            alt="{{ $design['title'] }}"
-                            class="rounded-md border-2 border-black w-full h-auto object-cover opacity-80 hover:opacity-100 transition cursor-pointer"
-                            data-title="{{ $design['title'] }}"
-                            data-desc="{{ $design['description'] }}">
+                        {{-- Scrollable right section --}}
+                        <div class="relative flex-1 overflow-hidden">
+                            <div id="carousel" class="flex items-center transition-transform duration-700 ease-in-out">
+                                @foreach ($designs->skip(1) as $design)
+                                    <div class="w-1/3 flex-shrink-0 px-2">
+                                        <img src="{{ asset($design->image_url) }}" alt="{{ $design->title }}"
+                                            class="rounded-md border-2 border-black w-full h-auto object-cover opacity-80 hover:opacity-100 transition cursor-pointer"
+                                            data-title="{{ $design->title }}" data-desc="{{ $design->description }}">
+                                    </div>
+                                @endforeach
+                            </div>
+
+                            {{-- Arrows --}}
+                            <button id="prev"
+                                class="absolute left-0 top-1/2 -translate-y-1/2 bg-black text-white px-2 py-1 rounded-full opacity-70 hover:opacity-100">‹</button>
+                            <button id="next"
+                                class="absolute right-0 top-1/2 -translate-y-1/2 bg-black text-white px-2 py-1 rounded-full opacity-70 hover:opacity-100">›</button>
+                        </div>
                     </div>
-                @endforeach
-            </div>
 
-            {{-- Arrows --}}
-            <button id="prev"
-                class="absolute left-0 top-1/2 -translate-y-1/2 bg-black text-white px-2 py-1 rounded-full opacity-70 hover:opacity-100">‹</button>
-            <button id="next"
-                class="absolute right-0 top-1/2 -translate-y-1/2 bg-black text-white px-2 py-1 rounded-full opacity-70 hover:opacity-100">›</button>
-        </div>
-    </div>
+                    {{-- Description --}}
+                    <div class="mt-4">
+                        <p class="font-bold text-lg" id="descTitle">{{ $designs->first()->title }}</p>
+                        <p id="descText" class="text-sm text-gray-700">{{ $designs->first()->description }}</p>
+                    </div>
+                </div>
+                @else
+                <div class="p-5 rounded-xl">
+                    <h1 class="text-2xl font-bold mb-4">Recent Works</h1>
+                    <div class="bg-gray-100 border-2 border-gray-300 rounded-xl p-8 text-center">
+                        <p class="text-gray-600">No gallery items available at the moment.</p>
+                    </div>
+                </div>
+                @endif
 
-    {{-- Description --}}
-    <div class="mt-4">
-        <p class="font-bold text-lg" id="descTitle">{{ $designs[0]['title'] }}</p>
-        <p id="descText" class="text-sm text-gray-700">{{ $designs[0]['description'] }}</p>
-    </div>
-</div>
+                {{-- Script --}}
+                <script>
+                    document.addEventListener('DOMContentLoaded', () => {
+                        const carousel = document.getElementById('carousel');
+                        const next = document.getElementById('next');
+                        const prev = document.getElementById('prev');
+                        const slides = carousel.children.length;
+                        let index = 0;
 
-{{-- Script --}}
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const carousel = document.getElementById('carousel');
-        const next = document.getElementById('next');
-        const prev = document.getElementById('prev');
-        const slides = carousel.children.length;
-        let index = 0;
+                        function updateSlide() {
+                            carousel.style.transform = `translateX(-${index * 33.33}%)`;
+                        }
 
-        function updateSlide() {
-            carousel.style.transform = `translateX(-${index * 33.33}%)`;
-        }
+                        next.addEventListener('click', () => {
+                            index = (index + 1) % (slides - 2);
+                            updateSlide();
+                        });
 
-        next.addEventListener('click', () => {
-            index = (index + 1) % (slides - 2);
-            updateSlide();
-        });
+                        prev.addEventListener('click', () => {
+                            index = (index - 1 + (slides - 2)) % (slides - 2);
+                            updateSlide();
+                        });
 
-        prev.addEventListener('click', () => {
-            index = (index - 1 + (slides - 2)) % (slides - 2);
-            updateSlide();
-        });
+                        // Auto-scroll (optional)
+                        setInterval(() => {
+                            index = (index + 1) % (slides - 2);
+                            updateSlide();
+                        }, 4000);
 
-        // Auto-scroll (optional)
-        setInterval(() => {
-            index = (index + 1) % (slides - 2);
-            updateSlide();
-        }, 4000);
+                        // Click event on each image
+                        const imgs = carousel.querySelectorAll('img');
+                        const selectedImg = document.getElementById('selectedImage');
+                        const descTitle = document.getElementById('descTitle');
+                        const descText = document.getElementById('descText');
 
-        // Click event on each image
-        const imgs = carousel.querySelectorAll('img');
-        const selectedImg = document.getElementById('selectedImage');
-        const descTitle = document.getElementById('descTitle');
-        const descText = document.getElementById('descText');
-
-        imgs.forEach(img => {
-            img.addEventListener('click', () => {
-                selectedImg.src = img.src;
-                descTitle.textContent = img.dataset.title;
-                descText.textContent = img.dataset.desc;
-            });
-        });
-    });
-</script>
+                        imgs.forEach(img => {
+                            img.addEventListener('click', () => {
+                                selectedImg.src = img.src;
+                                descTitle.textContent = img.dataset.title;
+                                descText.textContent = img.dataset.desc;
+                            });
+                        });
+                    });
+                </script>
 
             </section>
         </main>

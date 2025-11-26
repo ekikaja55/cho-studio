@@ -2,247 +2,193 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Adoption;
+use App\Models\Commission;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class HistoryMemberController extends Controller
 {
-    private $historyData = [
-        [
-            'id' => '1',
-            'type' => 'Commission',
-            'file' => 'psd',
-            'title' => 'Headshot',
-            'date' => '07 Sept 2025',
-            'price' => 'Rp. 50.000',
-            'status' => 'Pending',
-            'description' => 'Headshot digital art dalam gaya semi-realistic dengan background polos.',
-            'image' => 'https://i.pinimg.com/736x/1c/af/75/1caf75cfd4fdf87db4dcdc5a97e809f2.jpg',
-        ],
-        [
-            'id' => '2',
-            'type' => 'Commission',
-            'file' => 'png',
-            'title' => 'Full Body',
-            'date' => '13 Nov 2025',
-            'price' => 'Rp. 50.000',
-            'status' => 'On Progress',
-            'description' => 'Full body commission dengan background detail sesuai permintaan klien.',
-            'image' => '/images/history/fullbody.png',
-        ],
-        [
-            'id' => '3',
-            'type' => 'OC Art',
-            'file' => 'pdf',
-            'title' => 'Coco Cho..',
-            'date' => '13 Nov 2025',
-            'price' => 'Rp. 100.000',
-            'status' => 'Pending',
-            'description' => 'Fanart OC “Coco Cho” dengan ekspresi ceria dan warna pastel.',
-            'image' => '/images/history/cococho.png',
-        ],
-        [
-            'id' => '4',
-            'type' => 'OC Art',
-            'file' => 'psd',
-            'title' => 'Rotor Wild',
-            'date' => '13 Nov 2025',
-            'price' => 'Rp. 100.000',
-            'status' => 'Confirmed',
-            'description' => 'OC Art bertema futuristik dengan efek cahaya biru neon.',
-            'image' => '/images/history/rotorwild.png',
-        ],
-        [
-            'id' => '5',
-            'type' => 'Commission',
-            'file' => 'png',
-            'title' => 'Full Body',
-            'date' => '13 Nov 2025',
-            'price' => 'Rp. 50.000',
-            'status' => 'Finished',
-            'description' => 'Full body character art dengan gaya chibi, sudah selesai dan dikirim.',
-            'image' => '/images/history/fullbody_finished.png',
-        ],
-        [
-            'id' => '6',
-            'type' => 'Commission',
-            'file' => 'psd',
-            'title' => 'Full Body',
-            'date' => '13 Nov 2025',
-            'price' => 'Rp. 50.000',
-            'status' => 'Finished',
-            'description' => 'Full body character art dengan gaya chibi, sudah selesai dan dikirim.',
-            'image' => '/images/history/fullbody_finished.png',
-        ],
-        [
-            'id' => '7',
-            'type' => 'OC Art',
-            'file' => 'psd',
-            'title' => 'Rotor Wild',
-            'date' => '13 Nov 2025',
-            'price' => 'Rp. 100.000',
-            'status' => 'Confirmed',
-            'description' => 'OC Art bertema futuristik dengan efek cahaya biru neon.',
-            'image' => '/images/history/rotorwild.png',
-        ],
-        [
-            'id' => '8',
-            'type' => 'Commission',
-            'file' => 'png',
-            'title' => 'Full Body',
-            'date' => '13 Nov 2025',
-            'price' => 'Rp. 50.000',
-            'status' => 'Finished',
-            'description' => 'Full body character art dengan gaya chibi, sudah selesai dan dikirim.',
-            'image' => '/images/history/fullbody_finished.png',
-        ],
-        [
-            'id' => '9',
-            'type' => 'Commission',
-            'file' => 'psd',
-            'title' => 'Full Body',
-            'date' => '13 Nov 2025',
-            'price' => 'Rp. 50.000',
-            'status' => 'Finished',
-            'description' => 'Full body character art dengan gaya chibi, sudah selesai dan dikirim.',
-            'image' => '/images/history/fullbody_finished.png',
-        ],
-        [
-            'id' => '10',
-            'type' => 'OC Art',
-            'file' => 'pdf',
-            'title' => 'Coco Cho..',
-            'date' => '13 Nov 2025',
-            'price' => 'Rp. 100.000',
-            'status' => 'Pending',
-            'description' => 'Fanart OC “Coco Cho” dengan ekspresi ceria dan warna pastel.',
-            'image' => '/images/history/cococho.png',
-        ],
-        [
-            'id' => '11',
-            'type' => 'Commission',
-            'file' => 'psd',
-            'title' => 'Headshot',
-            'date' => '07 Sept 2025',
-            'price' => 'Rp. 50.000',
-            'status' => 'Pending',
-            'description' => 'Headshot digital art dalam gaya semi-realistic dengan background polos.',
-            'image' => 'https://i.pinimg.com/736x/1c/af/75/1caf75cfd4fdf87db4dcdc5a97e809f2.jpg',
-        ],
-        [
-            'id' => '12',
-            'type' => 'Commission',
-            'file' => 'png',
-            'title' => 'Full Body',
-            'date' => '13 Nov 2025',
-            'price' => 'Rp. 50.000',
-            'status' => 'On Progress',
-            'description' => 'Full body commission dengan background detail sesuai permintaan klien.',
-            'image' => '/images/history/fullbody.png',
-        ],
-        [
-            'id' => '13',
-            'type' => 'OC Art',
-            'file' => 'pdf',
-            'title' => 'Coco Cho..',
-            'date' => '13 Nov 2025',
-            'price' => 'Rp. 100.000',
-            'status' => 'Pending',
-            'description' => 'Fanart OC “Coco Cho” dengan ekspresi ceria dan warna pastel.',
-            'image' => '/images/history/cococho.png',
-        ],
-        [
-            'id' => '14',
-            'type' => 'OC Art',
-            'file' => 'psd',
-            'title' => 'Rotor Wild',
-            'date' => '13 Nov 2025',
-            'price' => 'Rp. 100.000',
-            'status' => 'Confirmed',
-            'description' => 'OC Art bertema futuristik dengan efek cahaya biru neon.',
-            'image' => '/images/history/rotorwild.png',
-        ],
-        [
-            'id' => '15',
-            'type' => 'Commission',
-            'file' => 'png',
-            'title' => 'Full Body',
-            'date' => '13 Nov 2025',
-            'price' => 'Rp. 50.000',
-            'status' => 'Finished',
-            'description' => 'Full body character art dengan gaya chibi, sudah selesai dan dikirim.',
-            'image' => '/images/history/fullbody_finished.png',
-        ],
-        [
-            'id' => '16',
-            'type' => 'Commission',
-            'file' => 'psd',
-            'title' => 'Full Body',
-            'date' => '13 Nov 2025',
-            'price' => 'Rp. 50.000',
-            'status' => 'Finished',
-            'description' => 'Full body character art dengan gaya chibi, sudah selesai dan dikirim.',
-            'image' => '/images/history/fullbody_finished.png',
-        ],
-        [
-            'id' => '17',
-            'type' => 'OC Art',
-            'file' => 'psd',
-            'title' => 'Rotor Wild',
-            'date' => '13 Nov 2025',
-            'price' => 'Rp. 100.000',
-            'status' => 'Confirmed',
-            'description' => 'OC Art bertema futuristik dengan efek cahaya biru neon.',
-            'image' => '/images/history/rotorwild.png',
-        ],
-        [
-            'id' => '18',
-            'type' => 'Commission',
-            'file' => 'png',
-            'title' => 'Full Body',
-            'date' => '13 Nov 2025',
-            'price' => 'Rp. 50.000',
-            'status' => 'Finished',
-            'description' => 'Full body character art dengan gaya chibi, sudah selesai dan dikirim.',
-            'image' => '/images/history/fullbody_finished.png',
-        ],
-        [
-            'id' => '19',
-            'type' => 'Commission',
-            'file' => 'psd',
-            'title' => 'Full Body',
-            'date' => '13 Nov 2025',
-            'price' => 'Rp. 50.000',
-            'status' => 'Finished',
-            'description' => 'Full body character art dengan gaya chibi, sudah selesai dan dikirim.',
-            'image' => '/images/history/fullbody_finished.png',
-        ],
-        [
-            'id' => '20',
-            'type' => 'OC Art',
-            'file' => 'pdf',
-            'title' => 'Coco Cho..',
-            'date' => '13 Nov 2025',
-            'price' => 'Rp. 100.000',
-            'status' => 'Pending',
-            'description' => 'Fanart OC “Coco Cho” dengan ekspresi ceria dan warna pastel.',
-            'image' => '/images/history/cococho.png',
-        ],
-    ];
-
     public function index()
     {
-        $historyData = $this->historyData;
-        return view('member.history', compact('historyData'));
+        return view('member.history');
     }
 
-    public function detail($id)
+    public function getHistory(Request $request)
     {
-        $item = collect($this->historyData)->firstWhere('id', $id);
+        $user = auth()->user();
 
-        if (!$item) {
-            abort(404, 'History item not found.');
+        // 1. Extract Filters from Request
+        $type = $request->input('type', 'all');
+        $search = $request->input('search');
+        $commissionStatus = $request->input('commission_status', 'all');
+        $adoptionStatus = $request->input('adoption_status', 'all');
+
+        $historyData = collect();
+
+        // 2. Query Commissions (if 'all' or 'commission' is selected)
+        if ($type === 'all' || strtolower($type) === 'commission') {
+            $commissions = Commission::where('member_id', $user->member_id)
+                ->when($search, function ($query, $term) {
+                    return $query->where('description', 'like', '%' . $term . '%');
+                })
+                ->when(strtolower($commissionStatus) !== 'all', function ($query) use ($commissionStatus) {
+                    return $query->where('progress_status', strtolower($commissionStatus));
+                })
+                ->get();
+
+            $historyData = $historyData->merge($commissions->map(function ($commission) {
+                return [
+                    ...$commission->toArray(),
+                    'type' => 'Commission',
+                ];
+            }));
         }
 
-        return view('member.history_detail', compact('item'));
+        // 3. Query Adoptions
+        if ($type === 'all' || strtolower($type) === 'adoption') {
+            $adoptions = Adoption::with('gallery')
+                ->where('email', $user->email)
+                // Apply search filter if present (search in gallery title)
+                ->when($search, function ($query, $term) {
+                    return $query->whereHas('gallery', function ($q) use ($term) {
+                        $q->where('title', 'like', '%' . $term . '%');
+                    });
+                })
+                ->when(strtolower($adoptionStatus) !== 'all', function ($query) use ($adoptionStatus) {
+                    return $query->where('order_status', strtolower($adoptionStatus));
+                })
+                ->get();
+
+            $historyData = $historyData->merge($adoptions->map(function ($adoption) {
+                return [
+                    ...$adoption->toArray(),
+                    'type' => 'Adoption',
+                ];
+            }));
+        }
+
+
+        // 4. Sort and return
+        $historyData = $historyData->sortByDesc('created_at')->values();
+
+        return response()->json([
+            'success' => true,
+            'data' => $historyData,
+        ]);
+    }
+
+    public function adoption_detail($id)
+    {
+        $user = auth()->user();
+
+        // PERBAIKAN: Tambahkan pengecekan kepemilikan (berdasarkan email user)
+        $adoption = Adoption::with("gallery")
+            ->where('id', $id)
+            ->where('email', $user->email) // Pastikan email cocok dengan user login
+            ->first();
+
+        if (!$adoption) {
+            // Menggunakan 404 agar user iseng tidak tahu bahwa ID tersebut sebenarnya ada tapi milik orang lain
+            abort(404, 'Data adopsi tidak ditemukan atau Anda tidak memiliki akses.');
+        }
+
+        return view('member.history_adoption_detail', ['adoption' => $adoption]);
+    }
+
+    public function commission_detail($id)
+    {
+        $user = auth()->user();
+
+        // PERBAIKAN: Tambahkan pengecekan kepemilikan (berdasarkan member_id)
+        // Menggunakan 'where' sebelum 'first' atau 'firstOrFail'
+        $commission = Commission::with(['progressImages', 'member'])
+            ->where('commission_id', $id) // Pastikan nama kolom primary key benar (id atau commission_id)
+            ->where('member_id', $user->member_id) // KUNCI KEAMANAN: Hanya milik user login
+            ->first();
+
+        if (!$commission) {
+            // Arahkan ke 404 jika data tidak ditemukan atau bukan milik user tersebut
+            abort(404, 'Riwayat komisi tidak ditemukan atau Anda tidak berhak mengakses halaman ini.');
+        }
+
+        return view('member.history_commission_detail', ['commission' => $commission, 'member' => $commission->member]);
+    }
+
+    public function submit_review(Request $request, $commissionId)
+    {
+        $request->validate([
+            'type' => 'required|string|in:accept,revision',
+            'revision_notes' => 'nullable|string',
+        ]);
+
+        $notes = $request->input('revision_notes', '');
+
+        // Log the review action
+        Log::info("Review action '{$request->input('type')}' for Commission ID {$commissionId}: " . $notes);
+
+        $commission = Commission::with('progressImages')->findOrFail($commissionId);
+
+        $action = strtolower($request->input('type'));
+
+        // Default new status
+        $newStatus = $commission->progress_status;
+
+        if ($action === 'revision') {
+            // Customer requested revision
+            $newStatus = 'revision';
+
+            // update notes in commission progress table
+            $latestProgress = $commission->progressImages()
+                ->orderBy('created_at', 'desc')
+                ->first();
+            if ($latestProgress) {
+                $latestProgress->revision_notes = $notes;
+                $latestProgress->save();
+            }
+        } else {
+            // Customer accepted the current stage — determine next status based on latest stage
+            $latestProgress = $commission->progressImages()
+                ->orderBy('created_at', 'desc')
+                ->first();
+
+            $latestStage = $latestProgress->stage ?? null;
+
+            switch ($latestStage) {
+                case 'sketch':
+                case 'sketch_revision':
+                    // Sketch accepted -> move to coloring phase
+                    $newStatus = 'in_progress_coloring';
+                    // mark started if not already
+                    if (empty($commission->started_at)) {
+                        $commission->started_at = now();
+                    }
+                    break;
+
+                case 'coloring':
+                case 'coloring_revision':
+                case 'final':
+                    // Coloring/final accepted -> mark completed
+                    $newStatus = 'completed';
+                    if (empty($commission->completed_at)) {
+                        $commission->completed_at = now();
+                    }
+                    break;
+
+                default:
+                    // Fallback: mark as accepted
+                    $newStatus = 'accepted';
+                    break;
+            }
+        }
+
+        $commission->progress_status = $newStatus;
+
+        $commission->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Review submitted successfully.',
+        ]);
     }
 }
