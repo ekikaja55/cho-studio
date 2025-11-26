@@ -1,35 +1,36 @@
-# --- STAGE 1: FRONTEND BUILDER (Uses compatible Node image) ---
-# We use a standard Node image where rollup/native dependencies won't fail
-FROM node:18-slim AS frontend-builder
+# Stage 1 - Build Frontend (Vite)
+FROM node:18 AS frontend
 WORKDIR /app
-
-# Install dependencies and build assets
-COPY package.json package-lock.json ./
-RUN npm ci --no-audit --no-optional
+COPY package*.json ./
+RUN npm install
 COPY . .
 RUN npm run build
 
-# --- STAGE 2: FINAL SERVER IMAGE ---
-FROM richarvey/nginx-php-fpm:latest
-# Set working directory to the web root
-WORKDIR /var/www/html
+# Stage 2 - Backend (Laravel + PHP + Composer)
+FROM php:8.2-fpm AS backend
 
-# 1. Copy PHP/Composer dependencies from your local project
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git curl unzip libpq-dev libonig-dev libzip-dev zip \
+    && docker-php-ext-install pdo pdo_mysql mbstring zip
+
+# Install Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+WORKDIR /var/www
+
+# Copy app files
 COPY . .
 
-# 2. Copy ONLY the *compiled* assets from Stage 1
-# This skips the build failure issue entirely
-COPY --from=frontend-builder /app/public/build public/build
+# Copy built frontend from Stage 1
+COPY --from=frontend /app/public/dist ./public/dist
 
-# 3. Copy node_modules (Optional, but safer for runtime utilities)
-COPY --from=frontend-builder /app/node_modules node_modules
+# Install PHP dependencies
+RUN composer install --no-dev --optimize-autoloader
 
+# Laravel setup
+RUN php artisan config:clear && \
+    php artisan route:clear && \
+    php artisan view:clear
 
-# Image config (Keep your existing ENV vars)
-ENV SKIP_COMPOSER 0
-ENV ERRORS 1
-ENV RUN_SCRIPTS 1
-ENV REAL_IP_HEADER 1
-ENV COMPOSER_ALLOW_SUPERUSER 1
-
-CMD ["/start.sh"]
+CMD ["php-fpm"]
