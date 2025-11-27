@@ -33,7 +33,7 @@
                 </a>
 
                 {{-- LINE --}}
-                <a href="https://line.me" class="flex items-center gap-1 hover:underline">
+                <a href="https://line.me/ti/p/7mifiGmjzn" class="flex items-center gap-1 hover:underline">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
                         class="bi bi-line" viewBox="0 0 16 16">
                         <path
