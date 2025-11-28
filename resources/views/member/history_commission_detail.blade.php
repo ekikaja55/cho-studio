@@ -72,6 +72,8 @@
                     <h1 class="text-3xl font-extrabold text-gray-800 tracking-wide">Commission Details</h1>
                     <p class="text-lg text-gray-600 mt-1">{{ $commission->category_text }} -
                         {{ $commission->background_type_text }} Background</p>
+
+                    <input type="hidden" name="commission-id" id="commission-id" value="{{ $commission->commission_id }}">
                 </div>
 
                 <div class="flex flex-col lg:flex-row justify-between gap-8">
@@ -81,8 +83,7 @@
 
                         {{-- Progress Image Viewer --}}
                         <div class="w-full">
-                            <h2
-                                class="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2">
+                            <h2 class="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2">
                                 <i class="fa-solid fa-paintbrush text-purple-600"></i> Progress Images
                             </h2>
 
@@ -157,6 +158,17 @@
                                 <div
                                     class="px-3 py-1 rounded-full text-white {{ $commission->progress_status_color }} text-sm font-medium shadow-md">
                                     {{ $commission->progress_status_text }}
+                                </div>
+                            </div>
+
+                            {{-- Progress Percentage --}}
+                            <div class="flex justify-between items-center py-2 border-t border-purple-100 mt-1">
+                                <span class="font-bold">Percentage:</span>
+                                <p id="progress-percentage"></p>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-6 mt-1 shadow-inner">
+                                <div id="progress-bar" class="h-6 rounded-full text-center text-white font-bold bg-purple-500 shadow-md">
+                                    
                                 </div>
                             </div>
                         </div>

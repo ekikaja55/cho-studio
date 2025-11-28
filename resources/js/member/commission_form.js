@@ -98,13 +98,15 @@ function determineCategory() {
         return "headshot";
     }
     const style = $("input[name='style']:checked").val();
-    const type = $("input[name='type']:checked").val();
+    // const type = $("input[name='type']:checked").val();
+    const categoryTemp = $("#category-temp").val();
+    
     let category = "";
 
     if (style === "cartoon") {
-        category = "cartoon_" + type;
+        category = "cartoon_" + categoryTemp;
     } else {
-        category = type;
+        category = categoryTemp;
     }
     return category;
 }

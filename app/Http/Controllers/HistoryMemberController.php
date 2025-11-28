@@ -191,4 +191,32 @@ class HistoryMemberController extends Controller
             'message' => 'Review submitted successfully.',
         ]);
     }
+
+    function get_commission_progress($commissionId)
+    {
+        $commission = Commission::find($commissionId);
+        if (!$commission) {
+            return 0;
+        }
+
+        $status = $commission->progress_status;
+        $latestProgress = $commission->progressImages()
+            ->orderBy('created_at', 'desc')
+            ->first();
+        $stage = $latestProgress ? $latestProgress->stage : null;
+
+        // dd($status, $stage);
+
+        $statusMap = [
+            "pending" => 0,
+            "accepted" => 10,
+            "in_progress_sketch" => 25,
+            "review" => $stage === "sketch" ? 30 : ($stage === "coloring" ? 60 : 80),
+            "in_progress_coloring" => 50,
+            "revision" => $stage === "sketch_revision" ? 40 : ($stage === "coloring_revision" ? 70 : 90),
+            "completed" => 100,
+        ];
+
+        return $statusMap[$status] ?? 0;
+    }
 }

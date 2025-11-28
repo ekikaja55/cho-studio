@@ -96,6 +96,7 @@ Route::prefix('member')->middleware(['auth', 'role:client'])->group(function () 
     Route::get('/history/adoption/{id}', [HistoryMemberController::class, 'adoption_detail'])->name('member.history_adoption_detail');
     Route::get('/history/commission/{id}', [HistoryMemberController::class, 'commission_detail'])->name('member.history_commission_detail');
     Route::post('/history/commission/review/{commissionId}', [HistoryMemberController::class, 'submit_review'])->name('member.history_commission_submit_review');
+    Route::get("/history/commission/progress/{commissionId}", [HistoryMemberController::class, 'get_commission_progress'])->name('member.history_commission_get_progress');
 
     Route::get('/commission_type', [CommissionMemberController::class, 'index'])->name('member.commission_type');
     Route::get('/commission_form', [CommissionMemberController::class, 'form'])->name('member.commission_form');
