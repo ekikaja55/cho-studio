@@ -47,13 +47,13 @@
         @endif
 
         {{-- Tombol Aksi --}}
-        @if(!empty($data['action_url']))
+        <!-- @if(!empty($data['action_url']))
         <div style="margin-top:28px; text-align:center;">
             <a href="{{ $data['action_url'] }}" style="background:#333; color:#fff; text-decoration:none; padding:12px 24px; border-radius:50px; font-size:14px; font-weight:600; display:inline-block;">
                 {{ $data['action_text'] ?? 'View Details' }}
             </a>
         </div>
-        @endif
+        @endif -->
     </div>
 
     {{-- Footer --}}
