@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\AdoptionDeliveryMail;
-use App\Mail\AdoptionPaymentProcedureMail;
+use App\Mail\UniversalNotificationMail; // Import Universal Mail
 use App\Models\Adoption;
 use App\Models\Gallery;
 use Illuminate\Http\Request;
@@ -14,78 +14,82 @@ class ArtistAdoptionDetailController extends Controller
     public function detail($adoptionId)
     {
         $adoption = Adoption::with('gallery')->findOrFail($adoptionId);
-        // dd($adoption);
         return view("artist.adoption_detail", ["adoption" => $adoption]);
     }
 
     function update_order_status(Request $request, $adoptionId)
     {
-        // update order status
         $request->validate([
             'status' => 'required|string|in:processing,delivered,completed,cancelled'
         ]);
 
-        $adoption = Adoption::findOrFail($adoptionId);
+        $adoption = Adoption::with('gallery')->findOrFail($adoptionId);
         $adoption->order_status = $request->status;
         $adoption->save();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Adoption status updated successfully.'
-        ]);
+        // Panggil Function Notifikasi
+        $this->sendNotification($adoption, 'status_updated');
+
+        return response()->json(['success' => true, 'message' => 'Status updated.']);
     }
 
     function confirm_payment($adoptionId)
     {
-        $adoption = Adoption::findOrFail($adoptionId);
+        $adoption = Adoption::with('gallery')->findOrFail($adoptionId);
         $adoption->payment_status = 'paid';
-        $adoption->order_status = 'processing'; // immidiately move to processing after payment confirmed
+        $adoption->order_status = 'processing';
         $adoption->save();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Adoption payment status confirmed.'
-        ]);
+        // Panggil Function Notifikasi
+        $this->sendNotification($adoption, 'payment_confirmed');
+
+        return response()->json(['success' => true, 'message' => 'Payment confirmed.']);
     }
 
     function invalidate_payment($adoptionId)
     {
-        $adoption = Adoption::findOrFail($adoptionId);
+        $adoption = Adoption::with('gallery')->findOrFail($adoptionId);
         $adoption->order_status = "cancelled";
         $adoption->payment_status = 'invalid';
         $adoption->save();
 
-        // set gallery to available again
         $galleryItem = Gallery::findOrFail($adoption->gallery_id);
         $galleryItem->status = "available";
         $galleryItem->save();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Adoption payment status set to invalid.'
-        ]);
+        // Panggil Function Notifikasi
+        $this->sendNotification($adoption, 'payment_invalid');
+
+        return response()->json(['success' => true, 'message' => 'Payment invalid.']);
+    }
+
+    function mark_complete($adoptionId)
+    {
+        $adoption = Adoption::with('gallery')->findOrFail($adoptionId);
+        $adoption->order_status = 'completed';
+        $adoption->completed_at = now();
+        $adoption->save();
+
+        // Panggil Function Notifikasi
+        $this->sendNotification($adoption, 'completed');
+
+        return response()->json(['success' => true, 'message' => 'Marked as completed.']);
     }
 
     function save_notes(Request $request, $adoptionId)
     {
-        $request->validate([
-            'notes' => 'nullable|string|max:2000'
-        ]);
-
+        $request->validate(['notes' => 'nullable|string|max:2000']);
         $adoption = Adoption::findOrFail($adoptionId);
         $adoption->delivery_notes = $request->notes;
         $adoption->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Delivery notes saved successfully.'
-        ]);
+        return response()->json(['success' => true, 'message' => 'Notes saved.']);
     }
 
     function deliver_file(Request $request, $adoptionId)
     {
+        // ... (Logika upload file tetap sama seperti kode Anda) ...
         $request->validate([
-            'delivery_file' => 'nullable|file|max:10240', // max 10MB
+            'delivery_file' => 'nullable|file|max:10240',
             'delivery_type' => 'required|string|in:upload_file,link',
         ]);
 
@@ -93,9 +97,7 @@ class ArtistAdoptionDetailController extends Controller
 
         if ($request->delivery_type == 'upload_file' && $request->hasFile('delivery_file')) {
             $uploadPath = public_path('adoptions/' . $adoptionId);
-            if (!file_exists($uploadPath)) {
-                mkdir($uploadPath, 0755, true);
-            }
+            if (!file_exists($uploadPath)) { mkdir($uploadPath, 0755, true); }
             $extension = $request->file('delivery_file')->getClientOriginalExtension();
             $filename = 'delivery_' . time() . '.' . $extension;
             $request->file('delivery_file')->move($uploadPath, $filename);
@@ -120,19 +122,59 @@ class ArtistAdoptionDetailController extends Controller
 
         Mail::to($adoption->email)->send(new AdoptionDeliveryMail($adoptionInfo));
 
-        return response()->json(['success' => true, 'message' => 'Files delivered and email sent.']);
+        return response()->json(['success' => true, 'message' => 'Delivered.']);
     }
 
-    function mark_complete($adoptionId)
+    // ==========================================
+    // PRIVATE FUNCTION UNTUK NOTIFIKASI ADOPTION
+    // ==========================================
+    private function sendNotification($adoption, $type)
     {
-        $adoption = Adoption::findOrFail($adoptionId);
-        $adoption->order_status = 'completed';
-        $adoption->completed_at = now();
-        $adoption->save();
+        $details = [
+            'Adoption ID' => '#' . $adoption->adoption_id,
+            'Artwork' => $adoption->gallery->title ?? '-',
+            'Status' => strtoupper($adoption->order_status)
+        ];
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Adoption marked as completed.'
-        ]);
+        // Default Config
+        $data = [
+            'subject' => 'Update on Adoption #' . $adoption->adoption_id,
+            'headline' => 'Status Updated',
+            'message' => 'There has been an update to your adoption request.',
+            'type' => 'info',
+            'image_url' => asset($adoption->gallery->image_url ?? ''),
+            'action_url' => url('/member/adoption'), // Sesuaikan route user dashboard
+            'action_text' => 'View Order',
+            'details' => $details
+        ];
+
+        // Logic Per Tipe
+        switch ($type) {
+            case 'payment_confirmed':
+                $data['subject'] = 'Payment Verified: Adoption #' . $adoption->adoption_id;
+                $data['headline'] = 'Payment Accepted!';
+                $data['message'] = 'We have verified your payment. We will process your files shortly.';
+                $data['type'] = 'success';
+                break;
+
+            case 'payment_invalid':
+                $data['subject'] = 'Payment Issue: Adoption #' . $adoption->adoption_id;
+                $data['headline'] = 'Payment Invalid';
+                $data['message'] = 'We could not verify your payment. The order has been cancelled.';
+                $data['type'] = 'error';
+                break;
+
+            case 'completed':
+                $data['headline'] = 'Order Completed';
+                $data['message'] = 'Thank you for adopting! The order is now marked as completed.';
+                $data['type'] = 'success';
+                break;
+                
+            case 'status_updated':
+                $data['message'] = 'The artist has updated the status to: <strong>'.strtoupper($adoption->order_status).'</strong>';
+                break;
+        }
+
+         Mail::to($adoption->email)->send(new \App\Mail\UniversalNotificationMail($data));
     }
 }
