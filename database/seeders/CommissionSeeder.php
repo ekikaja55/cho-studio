@@ -15,7 +15,7 @@ class CommissionSeeder extends Seeder
     public function run(): void
     {
         $faker = Faker::create();
-        
+
         // Get client and artist IDs
         $clientIds = DB::table('members')->where('role', 'client')->pluck('member_id')->toArray();
         $artist = DB::table('members')->where('role', 'artist')->first();
@@ -122,38 +122,67 @@ class CommissionSeeder extends Seeder
         ];
 
         $commissionId = 1;
-        // Sample reference images (external placeholders or your local assets)
-        $sampleImages = [
-            'https://picsum.photos/seed/comm1/800/600',
-            'https://picsum.photos/seed/comm2/800/600',
-            'https://picsum.photos/seed/comm3/800/600',
-            'https://picsum.photos/seed/comm4/800/600',
-            'https://picsum.photos/seed/comm5/800/600',
-            '/assets/comm_sample/sample1.jpg',
-            '/assets/comm_sample/sample2.jpg',
+
+        // Realistic commission descriptions
+        $descriptions = [
+            "I'd like a character portrait of my OC for my profile picture. She has long purple hair and wears a white dress with gold accents.",
+            "Need artwork of my D&D character - a half-elf ranger with short brown hair, green eyes, and leather armor. He carries a longbow.",
+            "Commission for my Twitch channel banner. My character is a cute cat girl with pink hair and twin tails, wearing a gaming headset.",
+            "Looking for an illustration of my FFXIV character. She's a Miqo'te with red hair and tribal markings, wearing scholar robes.",
+            "Portrait of my Genshin Impact OC. She's a Cryo user with ice-blue hair in a ponytail, wearing elegant traditional clothing.",
+            "Need a character illustration for my visual novel project. The character is a schoolgirl with glasses and short black hair.",
+            "Commission for my YouTube channel mascot. A cheerful boy character with messy blonde hair, blue eyes, and casual streetwear.",
+            "Want an artwork of my furry OC - a wolf with silver fur, amber eyes, wearing a black leather jacket and jeans.",
+            "Character art for my webcomic protagonist. She's a magical girl with long pink hair in braids, wielding a staff.",
+            "Need a portrait of my Valorant-inspired OC. She has short white hair with purple highlights and tactical gear.",
+            "Commission of my VTuber model concept. A demon girl with horns, red eyes, long black hair, and gothic lolita outfit.",
+            "Character illustration for my light novel. He's a swordsman with spiky blue hair, determined expression, and fantasy armor.",
+            "Portrait for my gaming clan logo. My character has dual-colored hair (black and red split), wearing cyberpunk outfit.",
+            "Need artwork of my Honkai Star Rail OC. She's an elegant character with silver hair and star motifs on her outfit.",
+            "Commission for anniversary gift - couple portrait of me and my partner as anime characters in formal attire.",
+            "Character art of my Project Sekai OC. She's a musician with pastel rainbow hair, wearing stage outfit with music note accessories.",
+            "Need a character sheet for my roleplay character - a vampire lord with long white hair, red eyes, and Victorian suit.",
+            "Portrait of my Arknights operator OC. She has fox ears, orange hair, wearing tactical equipment with traditional elements.",
+            "Commission for my story character - a knight with crimson armor, flowing cape, and determined eyes holding a great sword.",
+            "Character illustration for my game development project. A mage with flowing blue robes and mystical staff."
         ];
-        
+
+        // Pricing table (solid round numbers in IDR)
+        $priceTable = [
+            // regular styles
+            'headshot' => ['none' => 40000, 'simple' => 45000, 'detailed' => 50000],
+            'bustup' => ['none' => 50000, 'simple' => 55000, 'detailed' => 60000],
+            'halfbody' => ['none' => 65000, 'simple' => 75000, 'detailed' => 85000],
+            'fullbody' => ['none' => 125000, 'simple' => 135000, 'detailed' => 175000],
+            // cartoon styles
+            'cartoon_bustup' => ['none' => 25000, 'simple' => 30000, 'detailed' => 35000],
+            'cartoon_halfbody' => ['none' => 35000, 'simple' => 40000, 'detailed' => 45000],
+            'cartoon_fullbody' => ['none' => 50000, 'simple' => 55000, 'detailed' => 65000],
+        ];
+
+        $descriptionIndex = 0;
+
         foreach ($scenarios as $scenario) {
             for ($i = 0; $i < $scenario['count']; $i++) {
                 $createdAt = $faker->dateTimeBetween('-2 months', '-1 day');
-                
+
                 // Generate dates based on scenario
                 $startedAt = null;
                 $completedAt = null;
                 $fullyPaidAt = null;
                 $cancelledAt = null;
                 $cancelledBy = null;
-                
+
                 if (!empty($scenario['started_at']) && is_string($scenario['started_at'])) {
                     list($start, $end) = explode(' to ', $scenario['started_at']);
                     $startedAt = $faker->dateTimeBetween($start, $end);
                 }
-                
+
                 if (!empty($scenario['completed_at']) && is_string($scenario['completed_at'])) {
                     list($start, $end) = explode(' to ', $scenario['completed_at']);
                     $completedAt = $faker->dateTimeBetween($start, $end);
                 }
-                
+
                 if (!empty($scenario['fully_paid_at']) && is_string($scenario['fully_paid_at'])) {
                     list($start, $end) = explode(' to ', $scenario['fully_paid_at']);
                     $fullyPaidAt = $faker->dateTimeBetween($start, $end);
@@ -165,19 +194,6 @@ class CommissionSeeder extends Seeder
                     // cancelled_at between created_at and now
                     $cancelledAt = $faker->dateTimeBetween($createdAt, 'now');
                 }
-
-                // Pricing table (values in IDR)
-                $priceTable = [
-                    // regular styles
-                    'headshot' => ['none' => 40000, 'simple' => 45000, 'detailed' => 50000],
-                    'bustup' => ['none' => 50000, 'simple' => 55000, 'detailed' => 60000],
-                    'halfbody' => ['none' => 65000, 'simple' => 75000, 'detailed' => 85000],
-                    'fullbody' => ['none' => 125000, 'simple' => 135000, 'detailed' => 175000],
-                    // cartoon styles
-                    'cartoon_bustup' => ['none' => 25000, 'simple' => 30000, 'detailed' => 35000],
-                    'cartoon_halfbody' => ['none' => 35000, 'simple' => 40000, 'detailed' => 45000],
-                    'cartoon_fullbody' => ['none' => 50000, 'simple' => 55000, 'detailed' => 65000],
-                ];
 
                 // pick category & background_type first so price can be derived
                 $category = $faker->randomElement($categories);
@@ -206,9 +222,27 @@ class CommissionSeeder extends Seeder
                     $price *= (1 + 0.75 * $additionalChars); // +75% per additional character
                 }
 
-                // ensure 2 decimal places (store as decimal)
-                $price = round($price, 2);
- 
+                // Round to nearest 1000 for solid numbers
+                $price = round($price / 1000) * 1000;
+
+                // Get description (cycle through array)
+                $description = $descriptions[$descriptionIndex % count($descriptions)];
+                $descriptionIndex++;
+
+                // Reference images: only for commission_id 1 and 2
+                $referenceImage = null;
+                if ($commissionId === 1) {
+                    $referenceImage = '/commission_images/1.png';
+                } elseif ($commissionId === 2) {
+                    $referenceImage = '/commission_images/2.png';
+                } else if ($commissionId === 3) {
+                    // network image
+                    $referenceImage = 'https://media.istockphoto.com/id/814423752/photo/eye-of-model-with-colorful-art-make-up-close-up.jpg?s=612x612&w=0&k=20&c=l15OdMWjgCKycMMShP8UK94ELVlEGvt7GmB_esHWPYE=';
+                } else if ($commissionId === 4) {
+                    // network image
+                    $referenceImage = 'https://static.vecteezy.com/vite/assets/photo-masthead-375-BoK_p8LG.webp';
+                }
+
                 DB::table('commissions')->insert([
                     'commission_id' => $commissionId,
                     'member_id' => $faker->randomElement($clientIds),
@@ -216,9 +250,8 @@ class CommissionSeeder extends Seeder
                     'background_type' => $backgroundType,
                     'is_commercial_use' => $isCommercial,
                     'additional_characters' => $additionalChars,
-                    'description' => $faker->paragraph,
-                    // 70% chance to include a reference image
-                    'reference_image' => (rand(0, 9) < 7) ? $faker->randomElement($sampleImages) : null,
+                    'description' => $description,
+                    'reference_image' => $referenceImage,
                     'deadline' => $faker->dateTimeBetween('+1 week', '+3 months'),
                     'price' => $price,
                     'payment_status' => $scenario['payment_status'],
@@ -234,7 +267,7 @@ class CommissionSeeder extends Seeder
                     'created_at' => $createdAt,
                     'updated_at' => now(),
                 ]);
-                
+
                 $commissionId++;
             }
         }

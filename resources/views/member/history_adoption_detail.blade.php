@@ -119,16 +119,6 @@
                             </div>
                         </div>
 
-                        {{-- Buyer Message (General Gray/White Scheme) --}}
-                        <div class="bg-white p-4 rounded-xl border-2 border-gray-300 shadow-sm">
-                            <p class="font-bold text-lg mb-2 border-b border-gray-200 pb-1 flex items-center gap-2">
-                                Buyer's Message
-                            </p>
-                            <div class="text-gray-800 leading-relaxed text-sm">
-                                <p>{{ $adoption->buyer_message }}</p>
-                            </div>
-                        </div>
-
                         <div
                             class="w-full p-5 bg-linear-to-br from-white to-amber-50 rounded-2xl shadow-xl border-2 border-amber-300">
                             <p
@@ -138,21 +128,9 @@
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm mt-2">
                                 <div class="flex items-center gap-2 p-2 rounded-lg bg-amber-100 border border-amber-200">
                                     <i class="fa-solid fa-calendar-check text-amber-600"></i>
-                                    <span class="font-semibold">Confirmed At:</span>
+                                    <span class="font-semibold">Ordered At:</span>
                                     <span
-                                        class="ml-auto">{{ optional($adoption->confirmed_at)->format('M j, Y \a\t H:i') ?? 'N/A' }}</span>
-                                </div>
-                                <div class="flex items-center gap-2 p-2 rounded-lg bg-amber-100 border border-amber-200">
-                                    <i class="fa-solid fa-sack-dollar text-amber-600"></i>
-                                    <span class="font-semibold">Paid At:</span>
-                                    <span
-                                        class="ml-auto">{{ optional($adoption->paid_at)->format('M j, Y \a\t H:i') ?? 'N/A' }}</span>
-                                </div>
-                                <div class="flex items-center gap-2 p-2 rounded-lg bg-amber-100 border border-amber-200">
-                                    <i class="fa-solid fa-box text-amber-600"></i>
-                                    <span class="font-semibold">Delivered At:</span>
-                                    <span
-                                        class="ml-auto">{{ optional($adoption->delivered_at)->format('M j, Y \a\t H:i') ?? 'N/A' }}</span>
+                                        class="ml-auto">{{ optional($adoption->created_at)->format('M j, Y \a\t H:i') ?? 'N/A' }}</span>
                                 </div>
                                 <div class="flex items-center gap-2 p-2 rounded-lg bg-amber-100 border border-amber-200">
                                     <i class="fa-solid fa-star text-amber-600"></i>

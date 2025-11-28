@@ -101,6 +101,41 @@
                         <div class="text-lg font-bold text-blue-900">{{ $commission->background_type_text }}
                         </div>
                     </div>
+
+                    <div
+                        class="bg-gradient-to-br from-pink-50 to-pink-100 p-4 rounded-xl border-2 border-pink-200 shadow-sm">
+                        <label
+                            class="block text-xs font-bold text-pink-700 mb-2 uppercase tracking-wide">Commercial Use</label>
+                        <div class="text-lg font-bold text-pink-900">
+                            @if($commission->is_commercial_use)
+                                <span class="inline-flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-pink-600" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    Yes
+                                </span>
+                            @else
+                                <span class="inline-flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-pink-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                    </svg>
+                                    No
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <div
+                        class="bg-gradient-to-br from-indigo-50 to-indigo-100 p-4 rounded-xl border-2 border-indigo-200 shadow-sm">
+                        <label
+                            class="block text-xs font-bold text-indigo-700 mb-2 uppercase tracking-wide">Additional Characters</label>
+                        <div class="text-lg font-bold text-indigo-900">
+                            {{ $commission->additional_characters }} 
+                            <span class="text-sm font-normal text-indigo-700">
+                                {{ $commission->additional_characters === 1 ? 'character' : 'characters' }}
+                            </span>
+                        </div>
+                    </div>
                 </div>
 
                 <div

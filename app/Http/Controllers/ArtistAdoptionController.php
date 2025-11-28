@@ -69,7 +69,4 @@ class ArtistAdoptionController extends Controller
             'status_counts' => $statusCounts,
         ]);
     }
-
-    
 }
-

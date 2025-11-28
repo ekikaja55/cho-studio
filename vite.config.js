@@ -9,15 +9,25 @@ export default defineConfig({
             input: [
                 "resources/css/app.css",
                 "resources/js/app.js",
-                "resources/js/artist/commisions.js",
+                "resources/js/artist/commissions.js",
                 "resources/js/artist/commissions_detail.js",
                 "resources/js/artist/adoptions.js",
                 "resources/js/artist/adoption_detail.js",
                 "resources/js/member/history.js",
                 "resources/js/member/history_commission_detail.js",
+                "resources/js/member/commission_form.js",
                 "resources/js/gallery.js"
             ],
             refresh: true,
         }),
     ],
+    build: {
+        manifest: true,
+        outDir: 'public/build',
+        rollupOptions: {
+            output: {
+                manualChunks: undefined,
+            }
+        }
+    }
 });

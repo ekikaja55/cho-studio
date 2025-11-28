@@ -18,22 +18,22 @@ class GalleryPageController extends Controller
      * Menampilkan halaman galeri dengan data dari database.
      * Mengambil HANYA galeri yang statusnya 'available'.
      */
-    public function index()
-    {
-        // Fetch all gallery items ordered by newest first
-        $allGallery = Gallery::orderBy('created_at', 'desc')->get();
+public function index()
+{
+    // Fetch all gallery items ordered by newest first
+    $allGallery = Gallery::orderBy('created_at', 'desc')->get();
 
-        // available: items that are available for adoption/sale
-        $available = $allGallery->where('status', 'available')->values();
+    // available: items that are available for adoption/sale
+    $available = $allGallery->where('status', 'available')->values();
 
-        // not_sold: items that are not for sale (not_sold status)
-        $not_sold = $allGallery->where('status', 'not_sold')->values();
+    // not_sold: items that are not for sale (not_sold status)
+    $not_sold = $allGallery->where('status', 'not_sold')->values();
 
-        $allGalleryExceptNotSold = $allGallery->where('status', '!=', 'not_sold')->values();
+    $allGalleryExceptNotSold = $allGallery->where('status', '!=', 'not_sold')->values();
 
-        // Return only the requested collections: available, not_sold, and allGallery
-        return view('gallery.gallery', compact('available', 'not_sold', 'allGalleryExceptNotSold'));
-    }
+    // Return only the requested collections: available, not_sold, and allGallery
+    return view('gallery.gallery', compact('available', 'not_sold', 'allGalleryExceptNotSold'));
+}
 
     /**
      * Menyimpan data adopsi baru, mengunggah file, dan mengirim email.

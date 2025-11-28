@@ -188,3 +188,35 @@
 @section('scripts')
     @vite(['resources/js/gallery.js'])
 @endsection
+
+@section('disableinspect')
+    <script>
+        (function() {
+            // disable right-click
+            document.addEventListener('contextmenu', e => e.preventDefault());
+
+            // disable common DevTools shortcuts (best-effort)
+            document.addEventListener('keydown', function(e) {
+                const k = e.key || e.keyIdentifier || e.keyCode;
+                const key = (typeof k === 'string') ? k.toUpperCase() : k;
+
+                // F12
+                if (key === 'F12' || key === 123) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+
+                // Ctrl+U (view source), Ctrl+Shift+I/J/C/K (DevTools), Ctrl+Shift+C
+                if (e.ctrlKey && (e.key && ['U'].includes(e.key.toUpperCase()))) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                if (e.ctrlKey && e.shiftKey && e.key && ['I', 'J', 'C', 'K'].includes(e.key.toUpperCase())) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            }, true);
+        })();
+    </script>
+@endsection
+

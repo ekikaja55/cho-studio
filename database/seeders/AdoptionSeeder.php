@@ -91,17 +91,28 @@ class AdoptionSeeder extends Seeder
                 $paymentList = array_values($paymentList);
             }
 
+            // randomly set between random email and members email
+            $useMemberEmail = mt_rand(0, 2);
+            if ($useMemberEmail === 1) {
+                $email = 'biasa@gmail.com';
+            } elseif ($useMemberEmail === 2) {
+                $email = 'vip.client@gmail.com';
+            } else {
+                $email = "randombuyer@example.com";
+            }
+
             $adoptions[] = [
                 'gallery_id' => $gallery->gallery_id,
-                'email' => "buyer{$gallery->gallery_id}@example.com",
+                'email' => $email,
                 'payment_confirmation' => $paymentConfirmation,
                 'order_status' => $orderStatus,
                 'payment_status' => $paymentStatus,
                 "delivery_notes" => "",
                 "delivery_type" => $orderStatus == "delivered" ? "link" : null,
                 'delivery_file' => $orderStatus == "delivered" ? "https://drive.google.com/file/d/1-XtTcKqzTsduUHaEjKZN6YBs8hPe_2G6/view?usp=sharing" : null,
-                'created_at' => $adoptionTime,
-                'updated_at' => now(),
+                // ensure datetime strings for DB inserts
+                'created_at' => $adoptionTime->toDateTimeString(),
+                'updated_at' => now()->toDateTimeString(),
             ];
 
             $inserted++;

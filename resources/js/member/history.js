@@ -99,7 +99,7 @@ function getHistoryData(filters = {}) {
                                         item.created_at
                                     )}</p>
                                     <p class="text-sm text-stone-700"><i class="fa-solid fa-money-bill-wave mr-2"></i> ${formatPrice(
-                                        item.price
+                                        item.price || item.gallery.price
                                     )}</p>
                                 </div>
                                 
@@ -230,12 +230,10 @@ function getPrimaryStatusInfo(type, status) {
     } else if (typeLower === "adoption") {
         // Adoption Order Status
         switch (status) {
-            case "pending":
-                return { text: "Pending", colorClass: "bg-red-600" };
-            case "confirmed":
-                return { text: "Confirmed", colorClass: "bg-blue-500" };
+            case "placed":
+                return { text: "Placed", colorClass: "bg-amber-500" };
             case "processing":
-                return { text: "Processing", colorClass: "bg-amber-500" };
+                return { text: "Processing", colorClass: "bg-blue-500" };
             case "delivered":
                 return { text: "Delivered", colorClass: "bg-purple-400" };
             case "completed":
@@ -275,16 +273,15 @@ function getPaymentInfo(type, status) {
                 return { text: "Unknown", colorClass: "bg-gray-500" };
         }
     } else if (typeLower === "adoption") {
-        // Adoption Payment Status (unpaid/paid/refunded/failed)
         switch (statusClean) {
-            case "unpaid":
-                return { text: "Unpaid", colorClass: "bg-red-600" };
+            case "pending":
+                return { text: "Pending", colorClass: "bg-red-600" };
             case "paid":
                 return { text: "Paid", colorClass: "bg-green-600" };
             case "refunded":
                 return { text: "Refunded", colorClass: "bg-blue-600" };
-            case "failed":
-                return { text: "Failed", colorClass: "bg-gray-600" };
+            case "invalid":
+                return { text: "Invalid", colorClass: "bg-gray-600" };
             default:
                 return { text: "Unknown", colorClass: "bg-gray-400" };
         }

@@ -47,10 +47,12 @@ class HistoryMemberController extends Controller
 
         // 3. Query Adoptions
         if ($type === 'all' || strtolower($type) === 'adoption') {
-            $adoptions = Adoption::where('email', $user->email)
+            $adoptions = Adoption::with('gallery')
+                ->where('email', $user->email)
+                // Apply search filter if present (search in gallery title)
                 ->when($search, function ($query, $term) {
-                    return $query->whereHas('gallery', function ($galleryQuery) use ($term) {
-                        $galleryQuery->where('title', 'like', '%' . $term . '%');
+                    return $query->whereHas('gallery', function ($q) use ($term) {
+                        $q->where('title', 'like', '%' . $term . '%');
                     });
                 })
                 ->when(strtolower($adoptionStatus) !== 'all', function ($query) use ($adoptionStatus) {
@@ -187,7 +189,6 @@ class HistoryMemberController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Review submitted successfully.',
-
         ]);
     }
 }
