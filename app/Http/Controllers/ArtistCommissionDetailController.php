@@ -130,18 +130,18 @@ class ArtistCommissionDetailController extends Controller
     private function sendNotification($commission, $type, $extraData = [])
     {
         $details = [
-            'Commission ID' => '#' . $commission->id,
+            'Commission ID' => '#' . $commission->commission_id,
             'Price' => 'Rp ' . number_format($commission->price, 0, ',', '.'),
             'Deadline' => $commission->deadline ? date('d M Y', strtotime($commission->deadline)) : '-',
         ];
 
         // Default Config
         $data = [
-            'subject' => 'Update on Commission #' . $commission->id,
+            'subject' => 'Update on Commission #' . $commission->commission_id,
             'headline' => 'Commission Update',
             'message' => 'There is an update on your commission.',
             'type' => 'info',
-            'action_url' => url('/member/commission/' . $commission->id),
+            'action_url' => url('/member/commission/' . $commission->commission_id),
             'action_text' => 'Check Dashboard',
             'details' => $details
         ];
@@ -168,7 +168,7 @@ class ArtistCommissionDetailController extends Controller
                 break;
 
             case 'cancelled':
-                $data['subject'] = 'Commission Cancelled #' . $commission->id;
+                $data['subject'] = 'Commission Cancelled #' . $commission->commission_id;
                 $data['headline'] = 'Commission Cancelled';
                 $data['message'] = 'We are sorry, the artist has cancelled this commission.<br>Reason: "<i>'.$commission->cancellation_reason.'</i>"';
                 $data['type'] = 'error';
