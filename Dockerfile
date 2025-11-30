@@ -47,8 +47,7 @@ COPY --chown=www-data:www-data . .
 COPY --from=frontend --chown=www-data:www-data /app/public/build ./public/build
 RUN echo "Verifying Vite build files:" && \
     ls -la public/build/ && \
-    ls -la public/build/.vite/ && \
-    if [ ! -f "public/build/.vite/manifest.json" ]; then \
+    if [ ! -f "public/build/manifest.json" ]; then \
         echo "ERROR: manifest.json not found!"; \
         exit 1; \
     fi && \

@@ -6,12 +6,10 @@ set -e
 echo "Starting Laravel application..."
 
 # Verify Vite manifest exists
-if [ ! -f "public/build/.vite/manifest.json" ]; then
-    echo "ERROR: Vite manifest not found at public/build/.vite/manifest.json"
+if [ ! -f "public/build/manifest.json" ]; then
+    echo "ERROR: Vite manifest not found at public/build/manifest.json"
     echo "Listing public/build contents:"
     ls -la public/build/ || echo "public/build directory does not exist"
-    echo "Listing public/build/.vite contents:"
-    ls -la public/build/.vite/ || echo "public/build/.vite directory does not exist"
     exit 1
 fi
 
