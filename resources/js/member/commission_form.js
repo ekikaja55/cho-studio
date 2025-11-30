@@ -54,11 +54,13 @@ function updatePrice() {
     // Calculate background price
     const bgPrice = bgPrices[background] || 0;
 
+    const totalBasePrice = basePrice + bgPrice;
+
     // Calculate commercial use (150% of base price)
-    const commercialPrice = commercialUse ? basePrice * 1.5 : 0;
+    const commercialPrice = commercialUse ? totalBasePrice * 1.5 : 0;
 
     // Calculate additional characters (75% of base price each)
-    const additionalCharsPrice = additionalChars * (basePrice * 0.75);
+    const additionalCharsPrice = additionalChars * (totalBasePrice * 0.75);
 
     // Calculate total
     const totalPrice =
