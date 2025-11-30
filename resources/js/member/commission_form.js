@@ -31,6 +31,7 @@ function formatCurrency(amount) {
 
 // Function to calculate and update price
 function updatePrice() {
+
     const category = $("#category-value").val();
     const style = $("input[name='style']:checked").val() || "normal";
     const background = $("input[name='background']:checked").val() || "none";
@@ -55,7 +56,7 @@ function updatePrice() {
     const bgPrice = bgPrices[background] || 0;
 
     const totalBasePrice = basePrice + bgPrice;
-
+    
     // Calculate commercial use (150% of base price)
     const commercialPrice = commercialUse ? totalBasePrice * 1.5 : 0;
 
@@ -113,32 +114,33 @@ function determineCategory() {
     return category;
 }
 
-// Event listeners for price updates
-$("input[name='style'], input[name='type']").on("change", updatePrice);
-$("input[name='background']").on("change", updatePrice);
-$("#commercialUse").on("change", updatePrice);
-$("#additionalChars").on("input", updatePrice);
-
-// Character counter for description textarea
-$("#description").on("input", function () {
-    const count = $(this).val().length;
-    $("#charCount").text(count);
-
-    // Change color based on character count
-    const $charCountDisplay = $("#charCountDisplay");
-    if (count > 900) {
-        $charCountDisplay.addClass("text-red-600").removeClass("text-gray-700");
-    } else if (count > 700) {
-        $charCountDisplay
-            .addClass("text-yellow-600")
-            .removeClass("text-gray-700 text-red-600");
-    } else {
-        $charCountDisplay.removeClass("text-red-600 text-yellow-600");
-    }
-});
-
 // Initialize price on page load
 $(document).ready(function () {
+    // Event listeners for price updates
+    $("input[name='style'], input[name='type']").on("change", updatePrice);
+    $("input[name='background']").on("change", updatePrice);
+    $("#commercialUse").on("change", updatePrice);
+    $("#additionalChars").on("input", updatePrice);
+
+    // Character counter for description textarea
+    $("#description").on("input", function () {
+        const count = $(this).val().length;
+        $("#charCount").text(count);
+
+        // Change color based on character count
+        const $charCountDisplay = $("#charCountDisplay");
+        if (count > 900) {
+            $charCountDisplay.addClass("text-red-600").removeClass("text-gray-700");
+        } else if (count > 700) {
+            $charCountDisplay
+                .addClass("text-yellow-600")
+                .removeClass("text-gray-700 text-red-600");
+        } else {
+            $charCountDisplay.removeClass("text-red-600 text-yellow-600");
+        }
+    });
+
+    // Initialize price calculation
     updatePrice();
 });
 
@@ -159,7 +161,7 @@ $("#commissionForm").on("submit", function (e) {
 
     const finalPrice = parseInt($("#finalPrice").val()) || 0;
     const category = determineCategory();
-    console.log(category);
+    // console.log(category);
 
     if ($("#deadline").val() == "") {
         showAlert("Please select a deadline for your commission.", "error");
