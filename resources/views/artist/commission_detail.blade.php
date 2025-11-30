@@ -53,6 +53,7 @@
 
     <div class="my-8 max-xl:mt-3 p-4 xl:w-[90%] mx-auto lg:w-full">
         <div class="shadow-2xl font-[HammersmithOne-Regular] overflow-hidden">
+
             <!-- Header Section -->
             <div
                 class="flex flex-col sm:flex-row sm:items-center justify-between items-center gap-3 p-6 border-t-4 border-x-4 border-stone-900 bg-(--color-pastel-turqoise)">

@@ -40,6 +40,7 @@
                         };
                     @endphp
 
+                    <input type="hidden" name="category_temp" id="category-temp" value="{{ $category ?? '' }}">
                     <input type="hidden" name="category" id="category-value" value="{{ $category ?? '' }}">
 
                     <div class="flex flex-col lg:flex-row gap-8 mb-8">

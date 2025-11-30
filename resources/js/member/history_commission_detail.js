@@ -60,7 +60,26 @@ function submitReview(commissionId, revisionNotes, type) {
     });
 }
 
+function getProgressPercentage(commissionId) {
+    $.ajax({
+        url: `/member/history/commission/progress/${commissionId}`,
+        type: "GET",
+        success: function (response) {
+            const progress = response;
+            console.log(progress);
+            $("#progress-percentage").text(progress + "%");
+            $("#progress-bar").css("width", progress + "%");
+            $("#progress-bar").text(progress + "%");
+        },
+        error: function (xhr, status, error) {
+            console.error("Error fetching commission progress:", error);
+        },
+    });
+}
+
 $(document).ready(function () {
+    getProgressPercentage($("#commission-id").val());
+
     // Toggle the visibility of the revision form when the button is clicked
     $("#revision-toggle-btn").click(function () {
         // Check if the form is currently hidden (using the Tailwind 'hidden' class)
