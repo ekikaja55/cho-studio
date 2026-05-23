@@ -19,7 +19,7 @@ class MemberSeeder extends Seeder
             [
                 'username' => 'cholazey',
                 'email' => 'cholazey@gmail.com',
-                'password_plain' => 'mysecretart', 
+                'password_plain' => 'mysecretart',
                 'line_id' => 'cholazey.line.id',
                 'phone_number' => '080011223344',
                 'instagram' => '@cholazey',

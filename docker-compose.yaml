@@ -1,0 +1,46 @@
+version: "3.8"
+
+services:
+  # Web server & Laravel PHP-FPM
+  web:
+    build:
+      context: .
+      # Menggunakan Dockerfile production tapi kita override behaviour-nya untuk dev
+      dockerfile: Dockerfile
+    image: chostudio-dev
+    container_name: chostudio_web
+    ports:
+      - "8080:80"
+    volumes:
+      # Mounting source code agar perubahan local langsung sinkron ke container
+      - .:/var/www
+      # Mencegah vendor lokal menimpa vendor di dalam container jika berbeda environment
+      - /var/www/vendor
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - DB_CONNECTION=mysql
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=chostudio_db
+      - DB_USERNAME=chostudio_user
+      - DB_PASSWORD=secret
+    depends_on:
+      - db
+
+  # Database MySQL Lokal
+  db:
+    image: mysql:8.0
+    container_name: chostudio_db
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: chostudio_db
+      MYSQL_USER: chostudio_user
+      MYSQL_PASSWORD: secret
+    volumes:
+      - chostudio_db_data:/var/lib/mysql
+
+volumes:
+  chostudio_db_data:
